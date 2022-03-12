@@ -5,7 +5,7 @@ use serenity::{
     prelude::*,
 };
 
-use tracing::{error, info, warn};
+use tracing::{warn};
 
 #[command]
 #[description("Kicks a user from server.")]
