@@ -5,6 +5,7 @@ mod commands;
 pub mod db;
 pub mod events;
 pub mod listeners;
+pub mod utils;
 
 use cmds::MODERATION_GROUP;
 use dotenv;
@@ -23,6 +24,7 @@ use std::env;
 use tokio;
 use tracing::{error, info, instrument};
 use tracing_subscriber;
+use crate::utils::typemaps::PgConnectionPool;
 
 #[tokio::main]
 #[instrument]
@@ -60,6 +62,16 @@ async fn main() {
     info!("Commands loaded!");
 
     // Connect Database
+    let _pool = db::get_pool(env::var("DATABASE_URL").expect("DATABASE_URL not set!").as_str()).await.unwrap();
+    match sqlx::migrate!("./migrations").run(&_pool).await {
+        Ok(_) => {
+            info!("[DATABASE] Database migrations created!");
+        }
+        Err(why) => {
+            error!("[DATABASE] Database migrations failed: {:?}", why);
+            panic!("[CORE FAILURE] Shutting down...");
+        }
+    };
 
     // Making bot instance
     let mut bot = Client::builder(&TOKEN)
@@ -70,6 +82,8 @@ async fn main() {
         .expect("Error creating bot instance.");
     {
         let mut data = bot.data.write().await;
+
+        data.insert::<PgConnectionPool>(_pool.clone());
     }
 
     info!("Core initialisation successfull! Attempting to start...");
