@@ -1,9 +1,11 @@
 extern crate serenity;
 
+pub mod cmds;
 mod commands;
 pub mod events;
 pub mod listeners;
 
+use cmds::MODERATION_GROUP;
 use dotenv;
 use listeners::Handler;
 use serenity::{
@@ -50,7 +52,9 @@ async fn main() {
     };
 
     // Making simple command framework
-    let framework = StandardFramework::new().configure(|c| c.owners(owners).prefix("!"));
+    let framework = StandardFramework::new()
+        .configure(|c| c.owners(owners).prefix("!"))
+        .group(&MODERATION_GROUP);
 
     info!("Commands loaded!");
 
