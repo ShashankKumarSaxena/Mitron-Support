@@ -5,6 +5,7 @@ pub mod events;
 pub mod listeners;
 
 use dotenv;
+use listeners::Handler;
 use serenity::{
     framework::{
         standard::{CommandGroup, CommandResult},
@@ -19,7 +20,6 @@ use std::env;
 use tokio;
 use tracing::{error, info, instrument};
 use tracing_subscriber;
-use listeners::Handler;
 
 #[tokio::main]
 #[instrument]
