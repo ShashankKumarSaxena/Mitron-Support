@@ -2,6 +2,7 @@ extern crate serenity;
 
 pub mod cmds;
 mod commands;
+pub mod db;
 pub mod events;
 pub mod listeners;
 

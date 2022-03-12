@@ -11,3 +11,4 @@ tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
 dotenv = { version = "0.15.0" }
 tracing = "0.1"
 tracing-subscriber = "0.2"
+sqlx = { features = [ "postgres", "tls", "runtime-async-std-native-tls", "macros", "uuid", "offline", "chrono" ] }

@@ -1,8 +1,8 @@
 use serenity::{
     framework::standard::{macros::command, Args, CommandResult},
     model::prelude::*,
-    prelude::*,
     model::user::User,
+    prelude::*,
 };
 
 use tracing::{error, info, warn};
@@ -127,8 +127,7 @@ async fn ban(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
                 {
                     Ok(_) => {}
                     Err(_) => {
-                        failed_txt
-                            .push_str(format!("⚠️ Failed to ban: {}\n", member.name).as_str());
+                        failed_txt.push_str(format!("⚠️ Failed to ban: {}\n", member.name).as_str());
                     }
                 }
             }
@@ -179,7 +178,7 @@ async fn unban(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
     };
 
     let user_id = args.single::<u64>().unwrap();
-    
+
     let mut user: User = match ctx.http.get_user(user_id).await {
         Err(_) => {
             msg.channel_id
@@ -196,33 +195,33 @@ async fn unban(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
     };
 
     match msg.guild_id {
-        Some(guild_id) => {
-            match guild_id.unban(&ctx.http, user.id).await {
-                Err(_) => {
-                    msg.channel_id
-                        .send_message(&ctx.http, |m| {
-                            m.embed(|e| {
-                                e.description("❌ Failed to unban user.");
-                                e
-                            })
+        Some(guild_id) => match guild_id.unban(&ctx.http, user.id).await {
+            Err(_) => {
+                msg.channel_id
+                    .send_message(&ctx.http, |m| {
+                        m.embed(|e| {
+                            e.description("❌ Failed to unban user.");
+                            e
                         })
-                        .await?;
-                    return Ok(());
-                }
-                Ok(_) => {
-                    let b_user = &user;
-                    msg.channel_id
-                        .send_message(&ctx.http, |m| {
-                            m.embed(|e| {
-                                e.description(format!("✅ Successfully unbanned {}.", b_user.name).as_str());
-                                e
-                            })
-                        })
-                        .await?;
-                    return Ok(());
-                }
+                    })
+                    .await?;
+                return Ok(());
             }
-        }
+            Ok(_) => {
+                let b_user = &user;
+                msg.channel_id
+                    .send_message(&ctx.http, |m| {
+                        m.embed(|e| {
+                            e.description(
+                                format!("✅ Successfully unbanned {}.", b_user.name).as_str(),
+                            );
+                            e
+                        })
+                    })
+                    .await?;
+                return Ok(());
+            }
+        },
         None => {}
     }
     Ok(())
