@@ -1,3 +1,9 @@
+extern crate serenity;
+
+mod commands;
+pub mod events;
+pub mod listeners;
+
 use dotenv;
 use serenity::{
     framework::{
@@ -13,6 +19,7 @@ use std::env;
 use tokio;
 use tracing::{error, info, instrument};
 use tracing_subscriber;
+use listeners::Handler;
 
 #[tokio::main]
 #[instrument]
@@ -53,6 +60,7 @@ async fn main() {
     let mut bot = Client::builder(&TOKEN)
         .application_id(APPLICATION_ID)
         .framework(framework)
+        .event_handler(Handler)
         .await
         .expect("Error creating bot instance.");
     {
