@@ -73,6 +73,8 @@ async fn main() {
         }
     };
 
+    info!("[DATABASE] Connected to Database!");
+
     // Making bot instance
     let mut bot = Client::builder(&TOKEN)
         .application_id(APPLICATION_ID)
