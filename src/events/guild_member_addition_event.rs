@@ -25,7 +25,6 @@ pub async fn guild_member_addition(
         Ok(value) => value,
         Err(_) => 0,
     };
-    println!("{}", channel_id);
 
     if channel_id != 0 {
         let channel = ctx.http.get_channel(channel_id as u64).await.unwrap();
