@@ -106,20 +106,20 @@ async fn welcome_disable(ctx: &Context, msg: &Message, args: Args) -> CommandRes
                     return Ok(());
                 }
             };
-            
+
             sqlx::query("UPDATE guildconfig SET welcome_channel_id = NULL WHERE id = $1;")
                 .bind(i64::from(guild_id))
                 .execute(&db)
                 .await?;
-            
-            msg.channel_id.send_message(&ctx.http, |m| {
-                m.embed(|e| {
-                    e.description(
-                        "✅ Successfully disabled welcome messages!",
-                    );
-                    e
+
+            msg.channel_id
+                .send_message(&ctx.http, |m| {
+                    m.embed(|e| {
+                        e.description("✅ Successfully disabled welcome messages!");
+                        e
+                    })
                 })
-            }).await?;
+                .await?;
             return Ok(());
         }
         None => {
