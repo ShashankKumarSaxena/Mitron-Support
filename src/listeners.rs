@@ -1,7 +1,7 @@
 use serenity::{async_trait, model::prelude::*, prelude::*};
 use tracing::instrument;
 
-use crate::events::{ready_event::ready, guild_create_event::guild_create};
+use crate::events::{ready_event::ready, guild_create_event::guild_create, guild_member_addition_event::guild_member_addition};
 
 pub struct Handler;
 
@@ -14,6 +14,10 @@ impl EventHandler for Handler {
     }
 
     // Guild Member Join Event
+    #[instrument(skip(self, _ctx, _guild_id))]
+    async fn guild_member_addition(&self, _ctx: Context, _guild_id: GuildId, _new_member: Member) {
+        guild_member_addition(&_ctx, _guild_id, _new_member).await;
+    }
 
     // Guild Create Event
     #[instrument(skip(self, _ctx, _guild))]
