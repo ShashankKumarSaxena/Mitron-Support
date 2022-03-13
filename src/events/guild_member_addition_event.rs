@@ -43,8 +43,9 @@ pub async fn guild_member_addition(
             .fetch_one(&db)
             .await
             .unwrap();
-        let welcome_msg = match cur.try_get::<&str, _>("welcome_message") {
-            Ok(value) => { value.replace("<<member>>", format!("<@{}>", member.user.id.0)) },
+
+        let welcome_msg = match mcur.try_get::<&str, _>("welcome_message") {
+            Ok(value) => { value.replace("<<member>>", format!("<@{}>", member.user.id.0).as_str()) },
             Err(_) => format!("Hello {}, welcome to this server. Hope you have a great time here. Please check out rules channel first.", member.display_name()),
         };
 
