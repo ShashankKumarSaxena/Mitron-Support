@@ -75,7 +75,7 @@ async fn welcome(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult 
 #[description("Disable welcome messages.")]
 #[only_in(guilds)]
 #[required_permissions("MANAGE_GUILD")]
-async fn welcome_disable(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
+async fn welcome_disable(ctx: &Context, msg: &Message, _args: Args) -> CommandResult {
     let db = ctx
         .data
         .read()
