@@ -38,13 +38,25 @@ pub async fn guild_member_addition(
             .await
             .unwrap();
 
-        channel_id.send_message(&ctx.http, |m| {
-            m.embed(|e| {
-                e.title(format!("Welcome to {}!", guild_name).as_str());
-                e.description(format!("Hello {}, welcome to this server. Hope you have a great time here. Please check out rules channel first.", member.display_name()));
-                e
+        let mcur = sqlx::query("SELECT welcome_message FROM guildconfig WHERE id = $1")
+            .bind(guild_id.0 as i64)
+            .fetch_one(&db)
+            .await
+            .unwrap();
+        let welcome_msg = match cur.try_get::<&str, _>("welcome_message") {
+            Ok(value) => { value.replace("<<member>>", format!("<@{}>", member.user.id.0)) },
+            Err(_) => format!("Hello {}, welcome to this server. Hope you have a great time here. Please check out rules channel first.", member.display_name()),
+        };
+
+        channel_id
+            .send_message(&ctx.http, |m| {
+                m.embed(|e| {
+                    e.title(format!("Welcome to {}!", guild_name).as_str());
+                    e.description(welcome_msg);
+                    e
+                })
             })
-        }).await;
+            .await;
 
         return Ok(());
     }

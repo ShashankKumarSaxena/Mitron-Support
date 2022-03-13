@@ -151,7 +151,7 @@ async fn welcome_message(ctx: &Context, msg: &Message, mut args: Args) -> Comman
                 msg.channel_id.send_message(&ctx.http, |m| {
                     m.embed(|e| {
                         e.title("📝 Edit Welcome Messages");
-                        e.description("To edit welcome message, you need to follow the instructions given below:\n\nℹ️ **Instructions**:\n`->` If you want that the joined member must get mentioned in the message, then add `<<member>>` in the message where you want the member to get mentioned.\n`->`: You can mention channels in the message too.");
+                        e.description("To edit welcome message, you need to follow the instructions given below:\n\nℹ️ **Instructions**:\n`->` If you want that the joined member must get mentioned in the message, then add `<<member>>` in the message where you want the member to get mentioned.\n\n`->` You can mention channels in the message too.");
                         e
                     })
                 }).await?;
