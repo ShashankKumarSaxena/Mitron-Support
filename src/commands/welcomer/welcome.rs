@@ -214,14 +214,8 @@ async fn welcome_image(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
                 return Ok(());
             }
 
-            let mut message = String::new();
-            while let Ok(arg) = args.single::<String>() {
-                message.push_str(&arg);
-                message.push_str(" ");
-            }
-
             sqlx::query("UPDATE guildconfig SET welcome_image = $1 WHERE id = $2;")
-                .bind(message)
+                .bind(args.single::<String>().unwrap().as_str())
                 .bind(i64::from(guild_id))
                 .execute(&db)
                 .await?;

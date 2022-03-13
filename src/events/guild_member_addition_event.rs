@@ -54,7 +54,7 @@ pub async fn guild_member_addition(
             .await
             .unwrap();
 
-        let img = match mcur.try_get::<&str, _>("welcome_image") {
+        let img = match icur.try_get::<&str, _>("welcome_image") {
             Ok(value) => Some(value),
             Err(_) => None,
         };
