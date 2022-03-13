@@ -17,3 +17,6 @@ CREATE TABLE IF NOT EXISTS guildconfig (
     mod_log_enabled BOOLEAN DEFAULT FALSE,
     PRIMARY KEY(id)
 );
+
+---------------------------------------------------------------------
+
