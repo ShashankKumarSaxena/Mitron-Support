@@ -108,7 +108,7 @@ async fn welcome_disable(ctx: &Context, msg: &Message, _args: Args) -> CommandRe
                 }
             };
 
-            sqlx::query("UPDATE guildconfig SET welcome_channel_id = NULL WHERE id = $1;")
+            sqlx::query("UPDATE guildconfig SET welcome_channel_id = NULL, welcome_message = NULL, welcome_image = NULL WHERE id = $1;")
                 .bind(i64::from(guild_id))
                 .execute(&db)
                 .await?;
@@ -174,6 +174,62 @@ async fn welcome_message(ctx: &Context, msg: &Message, mut args: Args) -> Comman
                 .send_message(&ctx.http, |m| {
                     m.embed(|e| {
                         e.description("✅ Successfully set the welcome message!");
+                        e
+                    })
+                })
+                .await?;
+            return Ok(());
+        }
+        None => {
+            warn!("[COMMAND ERROR] Guild ID not found!");
+            return Ok(());
+        }
+    }
+
+    Ok(())
+}
+
+#[command("welcome-image")]
+#[description("Set a welcome image.")]
+#[only_in(guilds)]
+#[required_permissions("MANAGE_GUILD")]
+async fn welcome_image(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
+    let db = ctx
+        .data
+        .read()
+        .await
+        .get::<PgConnectionPool>()
+        .unwrap()
+        .clone();
+
+    match msg.guild_id {
+        Some(guild_id) => {
+            if args.is_empty() {
+                msg.channel_id.send_message(&ctx.http, |m| {
+                    m.embed(|e| {
+                        e.description("Please provide a image URL. If you want to reset welcome settings use `!welcome-disable` command!");
+                        e
+                    })
+                }).await?;
+                return Ok(());
+            }
+
+            let mut message = String::new();
+            while let Ok(arg) = args.single::<String>() {
+                message.push_str(&arg);
+                message.push_str(" ");
+            }
+
+            sqlx::query("UPDATE guildconfig SET welcome_image = $1 WHERE id = $2;")
+                .bind(message)
+                .bind(i64::from(guild_id))
+                .execute(&db)
+                .await?;
+
+            msg.channel_id
+                .send_message(&ctx.http, |m| {
+                    m.embed(|e| {
+                        e.description("✅ Successfully set the welcome image!");
                         e
                     })
                 })

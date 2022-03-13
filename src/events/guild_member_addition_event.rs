@@ -48,11 +48,29 @@ pub async fn guild_member_addition(
             Err(_) => format!("Hello {}, welcome to this server. Hope you have a great time here. Please check out rules channel first.", member.display_name()),
         };
 
+        let icur = sqlx::query("SELECT welcome_image FROM guildconfig WHERE id = $1")
+            .bind(guild_id.0 as i64)
+            .fetch_one(&db)
+            .await
+            .unwrap();
+
+        let img = match mcur.try_get::<&str, _>("welcome_image") {
+            Ok(value) => Some(value),
+            Err(_) => None,
+        };
+
         channel_id
             .send_message(&ctx.http, |m| {
                 m.embed(|e| {
                     e.title(format!("Welcome to {}!", guild_name).as_str());
                     e.description(welcome_msg);
+                    match img {
+                        Some(url) => {
+                            e.image(url);
+                        }
+                        None => {}
+                    };
+
                     e
                 })
             })
