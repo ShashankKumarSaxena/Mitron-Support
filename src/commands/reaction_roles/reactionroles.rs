@@ -1,11 +1,13 @@
 use serenity::{
     builder::{CreateActionRow, CreateButton},
     framework::standard::{macros::command, Args, CommandResult},
-    model::interactions::message_component::{ButtonStyle, ActionRow},
+    model::interactions::message_component::{ActionRow, ButtonStyle},
     model::prelude::*,
     model::user::User,
     prelude::*,
 };
+
+use crate::utils::typemaps::PgConnectionPool;
 
 ////////// INTERACTION STUFF ////////////
 
@@ -414,8 +416,14 @@ async fn reactionroles(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
         }
     };
 
+    // Add the stuff in database
+    let mut role_ids: Vec<i64> = vec![];
+    for role in roles.iter() {
+        role_ids.push(role.0 as i64);
+    }
+
     // Create reaction embed/prompt
-    channel
+    let rr_msg = channel
         .send_message(&ctx.http, |m| {
             m.embed(|e| {
                 if !embed_title.is_empty() {
@@ -460,14 +468,40 @@ async fn reactionroles(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
             // let mut action_rows: Vec<CreateActionRow> = vec![];
             m.components(|c| {
                 let mut action_row: CreateActionRow = CreateActionRow::default();
-                for (idx, rr) in components.iter().enumerate() {
+                for (_idx, rr) in components.iter().enumerate() {
                     action_row.add_button(rr.make_button());
                 }
-
                 c.add_action_row(action_row);
                 c
             });
             m
+        })
+        .await?;
+
+    let db = ctx
+        .data
+        .read()
+        .await
+        .get::<PgConnectionPool>()
+        .unwrap()
+        .clone();
+
+    sqlx::query("INSERT INTO reactionrole (guild_id, roles, message_id, titles, descriptions) VALUES ($1, $2, $3, $4, $5);")
+        .bind(msg.guild_id.unwrap().0 as i64)
+        .bind(role_ids.clone())
+        .bind(rr_msg.id.0 as i64)
+        .bind(role_titles.clone())
+        .bind(role_descriptions.clone())
+        .execute(&db)
+        .await?;
+
+    msg.channel_id
+        .send_message(&ctx.http, |m| {
+            m.embed(|e| {
+                e.title("Reaction Roles");
+                e.description("✅ Successfully setup reaction roles!");
+                e
+            })
         })
         .await?;
 

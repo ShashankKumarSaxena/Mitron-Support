@@ -3,6 +3,8 @@ use serenity::{model::gateway::Activity, model::guild::Member, model::prelude::*
 use sqlx;
 use sqlx::Row;
 
+// Fix multiple Queries redundancy!
+
 pub async fn guild_member_addition(
     ctx: Context,
     guild_id: GuildId,

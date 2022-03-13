@@ -3,7 +3,7 @@ use tracing::instrument;
 
 use crate::events::{
     guild_create_event::guild_create, guild_member_addition_event::guild_member_addition,
-    ready_event::ready,
+    ready_event::ready, interaction_create_event::interaction_create
 };
 
 pub struct Handler;
@@ -26,5 +26,11 @@ impl EventHandler for Handler {
     #[instrument(skip(self, _ctx, _guild))]
     async fn guild_create(&self, _ctx: Context, _guild: Guild, _is_new: bool) {
         guild_create(_ctx, _guild, _is_new).await;
+    }
+
+    // Interaction Handling
+    #[instrument(skip(self, _ctx))]
+    async fn interaction_create(&self, _ctx: Context, _interaction: Interaction) {
+        interaction_create(_ctx, _interaction).await;
     }
 }

@@ -18,5 +18,10 @@ CREATE TABLE IF NOT EXISTS guildconfig (
     PRIMARY KEY(id)
 );
 
----------------------------------------------------------------------
-
+CREATE TABLE IF NOT EXISTS reactionrole (
+    guild_id BIGINT,
+    roles BIGINT[],
+    message_id BIGINT,
+    titles CHARACTER VARYING[],
+    descriptions CHARACTER VARYING[]
+);
