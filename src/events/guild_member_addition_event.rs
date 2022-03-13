@@ -3,7 +3,11 @@ use serenity::{model::gateway::Activity, model::guild::Member, model::prelude::*
 use sqlx;
 use sqlx::Row;
 
-pub async fn guild_member_addition(ctx: &Context, guild_id: GuildId, member: Member) {
+pub async fn guild_member_addition(
+    ctx: Context,
+    guild_id: GuildId,
+    member: Member,
+) -> Result<(), sqlx::Error> {
     let db = ctx
         .data
         .read()
@@ -21,6 +25,7 @@ pub async fn guild_member_addition(ctx: &Context, guild_id: GuildId, member: Mem
         Ok(value) => value,
         Err(_) => 0,
     };
+    println!("{}", channel_id);
 
     if channel_id != 0 {
         let channel = ctx.http.get_channel(channel_id as u64).await.unwrap();
@@ -36,9 +41,13 @@ pub async fn guild_member_addition(ctx: &Context, guild_id: GuildId, member: Mem
         channel_id.send_message(&ctx.http, |m| {
             m.embed(|e| {
                 e.title(format!("Welcome to {}!", guild_name).as_str());
-                e.description("Hello {}, welcome to this server. Hope you have a great time here. Please check out rules channel first.");
+                e.description(format!("Hello {}, welcome to this server. Hope you have a great time here. Please check out rules channel first.", member.display_name()));
                 e
             })
-        }).await.unwrap();
+        }).await;
+
+        return Ok(());
     }
+
+    Ok(())
 }

@@ -12,6 +12,7 @@ use cmds::{MODERATION_GROUP, UTILITY_GROUP};
 use dotenv;
 use listeners::Handler;
 use serenity::{
+    client::bridge::gateway::GatewayIntents,
     framework::{
         standard::{CommandGroup, CommandResult},
         StandardFramework,
@@ -87,6 +88,7 @@ async fn main() {
         .application_id(APPLICATION_ID)
         .framework(framework)
         .event_handler(Handler)
+        .intents(GatewayIntents::all())
         .await
         .expect("Error creating bot instance.");
     {

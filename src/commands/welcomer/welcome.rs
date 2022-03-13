@@ -131,3 +131,60 @@ async fn welcome_disable(ctx: &Context, msg: &Message, _args: Args) -> CommandRe
 
     Ok(())
 }
+
+#[command("welcome-message")]
+#[description("Set a welcome message.")]
+#[only_in(guilds)]
+#[required_permissions("MANAGE_GUILD")]
+async fn welcome_message(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
+    let db = ctx
+        .data
+        .read()
+        .await
+        .get::<PgConnectionPool>()
+        .unwrap()
+        .clone();
+
+    match msg.guild_id {
+        Some(guild_id) => {
+            if args.is_empty() {
+                msg.channel_id.send_message(&ctx.http, |m| {
+                    m.embed(|e| {
+                        e.title("📝 Edit Welcome Messages");
+                        e.description("To edit welcome message, you need to follow the instructions given below:\n\nℹ️ **Instructions**:\n`1`: If you want that the joined member must get mentioned in the message, then add `<<member>>` in the message where you want the member to get mentioned.\n`2`: You can mention channels in the message too.");
+                        e
+                    })
+                }).await?;
+                return Ok(());
+            }
+
+            let mut message = String::new();
+            while let Ok(arg) = args.single::<String>() {
+                message.push_str(&arg);
+                message.push_str(" ");
+            }
+
+            sqlx::query("UPDATE guildconfig SET welcome_message = $1 WHERE id = $2;")
+                .bind(message)
+                .bind(i64::from(guild_id))
+                .execute(&db)
+                .await?;
+
+            msg.channel_id
+                .send_message(&ctx.http, |m| {
+                    m.embed(|e| {
+                        e.description("✅ Successfully set the welcome message!");
+                        e
+                    })
+                })
+                .await?;
+            return Ok(());
+        }
+        None => {
+            warn!("[COMMAND ERROR] Guild ID not found!");
+            return Ok(());
+        }
+    }
+
+    Ok(())
+}
