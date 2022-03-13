@@ -9,9 +9,7 @@ pub async fn get_pool(db_url: &str) -> Result<PgPool, sqlx::Error> {
         .await?);
 }
 
-pub async fn execute_queries(db_url: &str) -> Result<(), sqlx::Error> {
-    let pool = get_pool(db_url).await?;
-
+pub async fn execute_queries(pool: PgPool) -> Result<(), sqlx::Error> {
     let queries =
         fs::read_to_string("../database/schema.sql").expect("[DATABASE] Schema is not present!");
 
