@@ -10,6 +10,6 @@ pub struct Moderation;
 
 // All utility commands.
 #[group]
-#[commands(welcome, welcome_disable)]
+#[commands(welcome, welcome_disable, welcome_message)]
 #[summary = "Utility Commands"]
 pub struct Utility;
