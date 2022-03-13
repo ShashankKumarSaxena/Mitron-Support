@@ -8,7 +8,7 @@ pub mod listeners;
 pub mod utils;
 
 use crate::utils::typemaps::PgConnectionPool;
-use cmds::MODERATION_GROUP;
+use cmds::{MODERATION_GROUP, UTILITY_GROUP};
 use dotenv;
 use listeners::Handler;
 use serenity::{
@@ -57,7 +57,8 @@ async fn main() {
     // Making simple command framework
     let framework = StandardFramework::new()
         .configure(|c| c.owners(owners).prefix("!"))
-        .group(&MODERATION_GROUP);
+        .group(&MODERATION_GROUP)
+        .group(&UTILITY_GROUP);
 
     info!("Commands loaded!");
 

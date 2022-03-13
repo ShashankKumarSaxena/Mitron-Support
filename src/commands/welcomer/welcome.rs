@@ -14,21 +14,22 @@ use tracing::warn;
 #[example("#welcome")]
 #[only_in(guilds)]
 #[required_permissions("MANAGE_GUILD")]
-async fn welcome(ctx: &Context, msg: &Message, _args: Args) -> CommandResult {
-    if msg.mention_channels.len() == 0 {
-        msg.channel_id
-            .send_message(&ctx.http, |m| {
-                m.embed(|e| {
-                    e.title("⚠️ Channel not provided!");
-                    e.description("Please mention a channel to set up welcome messages.");
-                    e
+async fn welcome(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
+    let channel = match args.single::<ChannelId>() {
+        Err(_) => {
+            msg.channel_id
+                .send_message(&ctx.http, |m| {
+                    m.embed(|e| {
+                        e.title("⚠️ Channel not provided!");
+                        e.description("Please mention a channel to set up welcome messages.");
+                        e
+                    })
                 })
-            })
-            .await?;
-        return Ok(());
-    }
-
-    let channel = &msg.mention_channels[0];
+                .await?;
+            return Ok(());
+        }
+        Ok(ch) => ch,
+    };
 
     let db = ctx
         .data
@@ -41,7 +42,7 @@ async fn welcome(ctx: &Context, msg: &Message, _args: Args) -> CommandResult {
     match msg.guild_id {
         Some(guild_id) => {
             sqlx::query("UPDATE guildconfig SET welcome_channel_id = $1 WHERE id = $2;")
-                .bind(channel.id.0 as i64)
+                .bind(channel.0 as i64)
                 .bind(guild_id.0 as i64)
                 .execute(&db)
                 .await?;
@@ -52,7 +53,7 @@ async fn welcome(ctx: &Context, msg: &Message, _args: Args) -> CommandResult {
                         e.description(
                             format!(
                                 "✅ Successfully set the welcome channel to <#{}>",
-                                channel.id.0
+                                channel.0
                             )
                             .as_str(),
                         );
