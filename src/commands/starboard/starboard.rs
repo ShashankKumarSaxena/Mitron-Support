@@ -14,7 +14,7 @@ use std::i64;
 
 #[command("starboard")]
 #[required_permissions("MANAGE_GUILD")]
-#[sub_commands(enable, threshold)]
+#[sub_commands(enable, disable, threshold)]
 async fn starboard(ctx: &Context, msg: &Message) -> CommandResult {
     msg.channel_id
         .say(
@@ -52,6 +52,41 @@ async fn enable(ctx: &Context, msg: &Message) -> CommandResult {
             m.embed(|e| {
                 e.title("Starboard");
                 e.description("Starboard successfully enabled for this server!");
+                e
+            })
+        })
+        .await?;
+
+    Ok(())
+}
+
+#[command]
+#[required_permissions("MANAGE_GUILD")]
+#[description("Disable starboard for this server.")]
+#[only_in(guilds)]
+async fn disable(ctx: &Context, msg: &Message) -> CommandResult {
+    let guild_id = msg.guild_id.unwrap().0;
+
+    let pool = &ctx
+        .data
+        .read()
+        .await
+        .get::<PgConnectionPool>()
+        .unwrap()
+        .clone();
+
+    sqlx::query!(
+        "UPDATE guildconfig SET starboard_activate = FALSE WHERE id = $1",
+        guild_id as i64
+    )
+    .execute(pool)
+    .await?;
+
+    msg.channel_id
+        .send_message(&ctx.http, |m| {
+            m.embed(|e| {
+                e.title("Starboard");
+                e.description("Starboard successfully disabled for this server!");
                 e
             })
         })

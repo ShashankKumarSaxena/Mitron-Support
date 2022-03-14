@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS guildconfig (
     mod_log_channel bigint,
     mod_log_enabled BOOLEAN DEFAULT FALSE,
     autoroles BIGINT[],
-    starboard_threshold INTEGER,
+    starboard_threshold INTEGER DEFAULT 5,
     starboard_channel BIGINT,
     starboard_activate BOOLEAN DEFAULT FALSE,
     PRIMARY KEY(id)
