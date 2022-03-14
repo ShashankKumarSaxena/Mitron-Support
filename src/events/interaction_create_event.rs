@@ -49,7 +49,7 @@ pub async fn interaction_create(ctx: Context, interaction: Interaction) {
 
             msg_component
                 .create_interaction_response(&ctx.http, |i| {
-                    i.kind(InteractionResponseType::DeferredChannelMessageWithSource);
+                    i.kind(InteractionResponseType::ChannelMessageWithSource);
                     i.interaction_response_data(|d| {
                         d.flags(InteractionApplicationCommandCallbackDataFlags::EPHEMERAL);
                         d.content(
@@ -66,7 +66,7 @@ pub async fn interaction_create(ctx: Context, interaction: Interaction) {
 
             msg_component
                 .create_interaction_response(&ctx.http, |i| {
-                    i.kind(InteractionResponseType::DeferredChannelMessageWithSource);
+                    i.kind(InteractionResponseType::ChannelMessageWithSource);
                     i.interaction_response_data(|d| {
                         d.flags(InteractionApplicationCommandCallbackDataFlags::EPHEMERAL);
                         d.content(format!("You have been give **{}** role.", role.name).as_str());

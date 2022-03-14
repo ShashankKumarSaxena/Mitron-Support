@@ -77,38 +77,36 @@ pub async fn guild_member_addition(
                 })
             })
             .await;
+    }
+    let rcur = match sqlx::query("SELECT autoroles FROM guildconfig WHERE id = $1")
+        .bind(guild_id.0 as i64)
+        .fetch_one(&db)
+        .await
+    {
+        Ok(v) => v,
+        Err(_) => {
+            return Ok(());
+        }
+    };
 
-        let mut rcur = match sqlx::query("SELECT autoroles FROM guildconfig WHERE id = $1")
-            .bind(guild_id.0 as i64)
-            .fetch_one(&db)
-            .await
-        {
-            Ok(v) => v,
-            Err(_) => {
-                return Ok(());
-            }
-        };
+    let roles = match rcur.try_get::<Vec<i64>, _>("autoroles") {
+        Ok(r) => r,
+        Err(_) => {
+            return Ok(());
+        }
+    };
 
-        let roles = match rcur.try_get::<Vec<i64>, _>("autoroles") {
-            Ok(r) => r,
-            Err(_) => {
-                return Ok(());
-            }
-        };
-
-        if roles.len() != 0 {
-            let guild_roles = ctx.http.get_guild_roles(guild_id.0 as u64).await.unwrap();
-            for roleid in roles.iter() {
-                let role = guild_roles.iter().find(|r| r.id.0 == *roleid as u64);
-                match member.add_role(&ctx.http, role.unwrap().id).await {
-                    Ok(_) => {}
-                    Err(_) => {}
-                }
+    if roles.len() != 0 {
+        let guild_roles = ctx.http.get_guild_roles(guild_id.0 as u64).await.unwrap();
+        for roleid in roles.iter() {
+            let role = guild_roles.iter().find(|r| r.id.0 == *roleid as u64);
+            match member.add_role(&ctx.http, role.unwrap().id).await {
+                Ok(_) => {}
+                Err(_) => {}
             }
         }
-
-        return Ok(());
     }
 
-    Ok(())
+    return Ok(());
+
 }
