@@ -1,12 +1,9 @@
 use crate::utils::typemaps::PgConnectionPool;
-use chrono::NaiveDateTime;
 use serenity::{
     framework::standard::{macros::command, Args, CommandResult},
     model::prelude::*,
     prelude::*,
 };
-use sqlx::PgPool;
-use sqlx::Row;
 use std::i64;
 
 // This file is gonna change a lot in future. *probably but yeah it will*
@@ -14,7 +11,7 @@ use std::i64;
 
 #[command("starboard")]
 #[required_permissions("MANAGE_GUILD")]
-#[sub_commands(enable, disable, threshold)]
+#[sub_commands(enable, disable, threshold, config)]
 async fn starboard(ctx: &Context, msg: &Message) -> CommandResult {
     msg.channel_id
         .say(
@@ -29,7 +26,22 @@ async fn starboard(ctx: &Context, msg: &Message) -> CommandResult {
 #[required_permissions("MANAGE_GUILD")]
 #[description("Enable starboard for this server.")]
 #[only_in(guilds)]
-async fn enable(ctx: &Context, msg: &Message) -> CommandResult {
+async fn enable(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
+    if args.is_empty() {
+        msg.channel_id
+            .send_message(&ctx.http, |m| {
+                m.embed(|e| {
+                    e.title("Starboard");
+                    e.description("⚠️ You need to mention a channel to enable starboard in.");
+                    e
+                })
+            })
+            .await?;
+        return Ok(());
+    }
+
+    let starboard_channel = args.single::<ChannelId>().unwrap();
+
     let guild_id = msg.guild_id.unwrap().0;
 
     let pool = &ctx
@@ -41,7 +53,8 @@ async fn enable(ctx: &Context, msg: &Message) -> CommandResult {
         .clone();
 
     sqlx::query!(
-        "UPDATE guildconfig SET starboard_activate = TRUE WHERE id = $1",
+        "UPDATE guildconfig SET starboard_activate = TRUE, starboard_channel = $1 WHERE id = $2",
+        starboard_channel.0 as i64,
         guild_id as i64
     )
     .execute(pool)
@@ -51,7 +64,10 @@ async fn enable(ctx: &Context, msg: &Message) -> CommandResult {
         .send_message(&ctx.http, |m| {
             m.embed(|e| {
                 e.title("Starboard");
-                e.description("Starboard successfully enabled for this server!");
+                e.description(format!(
+                    "Starboard successfully enabled for this server!\nStarboard Channel: <#{}>\n*To reset starboard settings, use `!starboard disable` command.*",
+                    starboard_channel.0
+                ));
                 e
             })
         })
@@ -76,7 +92,7 @@ async fn disable(ctx: &Context, msg: &Message) -> CommandResult {
         .clone();
 
     sqlx::query!(
-        "UPDATE guildconfig SET starboard_activate = FALSE WHERE id = $1",
+        "UPDATE guildconfig SET starboard_activate = FALSE, starboard_channel = NULL WHERE id = $1",
         guild_id as i64
     )
     .execute(pool)
@@ -164,6 +180,68 @@ async fn threshold(ctx: &Context, msg: &Message, mut args: Args) -> CommandResul
                     "Starboard star threshold updated to {}.",
                     new_threshold
                 ));
+                e
+            })
+        })
+        .await?;
+
+    Ok(())
+}
+
+#[command]
+#[required_permissions("MANAGE_GUILD")]
+#[description("Check your starboard configuration.")]
+#[only_in(guilds)]
+async fn config(ctx: &Context, msg: &Message) -> CommandResult {
+    let pool = ctx
+        .data
+        .read()
+        .await
+        .get::<PgConnectionPool>()
+        .unwrap()
+        .clone();
+
+    let starboard_config = sqlx::query!(
+        "SELECT * FROM guildconfig WHERE id = $1;",
+        msg.guild_id.unwrap().0 as i64
+    )
+    .fetch_one(&pool)
+    .await?;
+
+    if starboard_config.starboard_activate.unwrap() == false {
+        msg.channel_id
+            .send_message(&ctx.http, |m| {
+                m.embed(|e| {
+                    e.title("Starboard");
+                    e.description(
+                        "Starboard is not activated! To do so, use `!starboard enable` command.",
+                    );
+                    e
+                })
+            })
+            .await?;
+        return Ok(());
+    }
+
+    msg.channel_id
+        .send_message(&ctx.http, |m| {
+            m.embed(|e| {
+                e.title("Starboard Config");
+                e.field(
+                    "Starboard Activate",
+                    starboard_config.starboard_activate.unwrap(),
+                    true,
+                );
+                e.field(
+                    "Starboard Channel",
+                    format!("<#{}>", starboard_config.starboard_channel.unwrap()),
+                    true,
+                );
+                e.field(
+                    "Starboard Threshold",
+                    starboard_config.starboard_threshold.unwrap(),
+                    true,
+                );
                 e
             })
         })
