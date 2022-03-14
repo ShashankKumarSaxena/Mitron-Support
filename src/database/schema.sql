@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS guildconfig (
     voice_log_enabled BOOLEAN DEFAULT FALSE,
     mod_log_channel bigint,
     mod_log_enabled BOOLEAN DEFAULT FALSE,
+    autoroles BIGINT[],
     PRIMARY KEY(id)
 );
 

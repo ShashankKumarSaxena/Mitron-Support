@@ -1,5 +1,6 @@
 use crate::commands::moderation::basic::*;
 use crate::commands::welcomer::welcome::*;
+use crate::commands::welcomer::autoroles::*;
 use crate::commands::reaction_roles::reactionroles::*;
 use serenity::framework::standard::macros::group;
 
