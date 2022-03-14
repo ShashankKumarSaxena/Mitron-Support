@@ -16,6 +16,9 @@ CREATE TABLE IF NOT EXISTS guildconfig (
     mod_log_channel bigint,
     mod_log_enabled BOOLEAN DEFAULT FALSE,
     autoroles BIGINT[],
+    starboard_threshold INTEGER,
+    starboard_channel BIGINT,
+    starboard_activate BOOLEAN DEFAULT FALSE,
     PRIMARY KEY(id)
 );
 
@@ -25,4 +28,13 @@ CREATE TABLE IF NOT EXISTS reactionrole (
     message_id BIGINT,
     titles CHARACTER VARYING[],
     descriptions CHARACTER VARYING[]
+);
+
+CREATE TABLE IF NOT EXISTS starboard_message (
+    message_id BIGINT,
+    guild_id BIGINT,
+    author_id BIGINT,
+    channel_id BIGINT,
+    id SERIAL INTEGER,
+    PRIMARY KEY(id)
 );

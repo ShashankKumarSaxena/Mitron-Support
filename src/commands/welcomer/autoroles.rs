@@ -6,7 +6,6 @@ use serenity::{
 };
 use sqlx::Row;
 use std::i64;
-use tracing::warn;
 
 #[command("autorole")]
 #[description("Setup autoroles.")]
