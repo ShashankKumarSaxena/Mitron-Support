@@ -1,7 +1,7 @@
 use crate::commands::moderation::basic::*;
-use crate::commands::welcomer::welcome::*;
-use crate::commands::welcomer::autoroles::*;
 use crate::commands::reaction_roles::reactionroles::*;
+use crate::commands::welcomer::autoroles::*;
+use crate::commands::welcomer::welcome::*;
 use serenity::framework::standard::macros::group;
 
 // All commands related with moderation
@@ -12,6 +12,16 @@ pub struct Moderation;
 
 // All utility commands.
 #[group]
-#[commands(welcome, welcome_disable, welcome_message, welcome_image, reactionroles)]
+#[commands(
+    welcome,
+    welcome_disable,
+    welcome_message,
+    welcome_image,
+    reactionroles,
+    autorole,
+    autorole_add,
+    autorole_remove,
+    autorole_list
+)]
 #[summary = "Utility Commands"]
 pub struct Utility;
