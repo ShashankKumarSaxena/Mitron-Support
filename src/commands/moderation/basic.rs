@@ -70,7 +70,7 @@ async fn kick(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
                     e.description("✅ Successfully kicked members.");
                 } else {
                     e.description(format!(
-                        "✅ Successfully kicked members.\n\n**Failed to kick following:**\n{}\n*Please check my permissions once!*",
+                        "✅ Successfully kicked members.\n\n**Warnings:**\n{}\n*Please check my permissions once!*",
                         failed_txt
                     ).as_str());
                 }
@@ -144,7 +144,7 @@ async fn ban(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
                     e.description("✅ Successfully banned members.");
                 } else {
                     e.description(format!(
-                        "✅ Successfully banned members.\n\n**Failed to ban following:**\n{}\n*Please check my permissions once!*",
+                        "✅ Successfully banned members.\n\n**Warnings:**\n{}\n*Please check my permissions once!*",
                         failed_txt
                     ).as_str());
                 }

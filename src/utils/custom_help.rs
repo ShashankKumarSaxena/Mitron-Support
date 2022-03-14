@@ -72,7 +72,7 @@ async fn send_error_embed(
         .await
 }
 
-async fn flatten_group_to_string(
+fn flatten_group_to_string(
     ctx: &Context,
     group_text: &mut String,
     group: &GroupCommandsPair,
@@ -82,42 +82,51 @@ async fn flatten_group_to_string(
     let repeated_indent_str = help_options.indention_prefix.repeat(nest_level);
 
     if nest_level > 0 {
-        writeln!(group_text, "{}__**{}**__", repeated_indent_str, group.name,);
+        let _ = writeln!(group_text, "{}__**{}**__", repeated_indent_str, group.name,);
     }
 
-    let mut summary_or_prefixes = false;
-
-    if let Some(group_summary) = group.summary {
-        // writeln!(group_text, "{}*{}*", &repeated_indent_str, group_summary)?;
-        write!(group_text, "{} *{}*", &repeated_indent_str, group_summary);
-
-        summary_or_prefixes = true;
-    }
-
+    let mut single_group: bool = false;
     if !group.prefixes.is_empty() {
-        writeln!(
+        let _ = writeln!(
             group_text,
             "{}{}: `{}`",
             &repeated_indent_str,
             help_options.group_prefix,
             group.prefixes.join("`, `"),
         );
-        summary_or_prefixes = true;
     };
+    let mut sep = ", ";
+    if single_group {
+        sep = "\n";
+    }
 
-    if summary_or_prefixes {
-        writeln!(group_text);
-    };
+    let mut joined_commands = String::from(format!("*{}*\n", group.summary.unwrap()));
 
-    let mut joined_commands = group
+    joined_commands.push_str(group
         .command_names
-        .join(&format!(", {}", &repeated_indent_str));
+        .join(&format!("{}{}", sep, &repeated_indent_str)).as_str());
 
-    let mut joined_commands = group
-        .command_names
-        .join(&format!("**{}**: \n", &repeated_indent_str));
+    if !group.command_names.is_empty() {
+        joined_commands.insert_str(0, &repeated_indent_str);
+    }
 
-    writeln!(group_text, "{}", joined_commands);
+    let _ = writeln!(group_text, "{}", joined_commands);
+
+    for sub_group in &group.sub_groups {
+        if !(sub_group.command_names.is_empty() && sub_group.sub_groups.is_empty()) {
+            let mut sub_group_text = String::default();
+
+            flatten_group_to_string(
+                ctx,
+                &mut sub_group_text,
+                &sub_group,
+                nest_level + 1,
+                &help_options,
+            );
+
+            let _ = write!(group_text, "{}", sub_group_text);
+        }
+    }
 }
 
 // Sends the main help embed in the front with `help` command.
@@ -136,17 +145,11 @@ async fn send_grouped_commands_embed(
     // may return an error.
 
     let mut embed = builder::CreateEmbed::default();
-    embed.colour(colour);
+    // embed.colour(colour);
     if groups.len() != 1 {
-        embed.description(format!("{}\n⚠️ **Note:** Remember `[]` = Optional Parameter and `<>` = Required Paramter. Do *not* type these when using commands.\n[Support Server](https://discord.gg/8Rfx5xw7Qe) | [Invite Me](https://discord.com/api/oauth2/authorize?client_id=886186405724835850&permissions=8&scope=bot)", help_description));
+        embed.description(format!("{}\n⚠️ **Note:** Remember `[]` = Optional Parameter and `<>` = Required Paramter. Do *not* type these when using commands.", help_description));
     }
-    embed.author(|a| {
-        a.name(String::from("Miत्रों Support Help Command"));
-        a.icon_url(String::from(
-            "https://cdn.discordapp.com/avatars/886186405724835850/853c54675a79ad001125908e9ccf0cda.webp?size=1024",
-        ));
-        a
-    });
+
     for group in groups {
         let mut embed_text = String::default();
 
