@@ -140,11 +140,16 @@ async fn send_grouped_commands_embed(
     groups: &[GroupCommandsPair],
     colour: Colour,
 ) -> Result<Message, Error> {
-    // ) -> Result<Message, Error> {
-    // creating embed outside message builder since flatten_group_to_string
-    // may return an error.
 
     let mut embed = builder::CreateEmbed::default();
+
+    embed.author(|a| {
+        a.name(String::from("Miत्रों Support Help Command"));
+        a.icon_url(String::from(
+            "https://cdn.discordapp.com/avatars/886186405724835850/853c54675a79ad001125908e9ccf0cda.webp?size=1024",
+        ));
+        a
+    });
     // embed.colour(colour);
     if groups.len() != 1 {
         embed.description(format!("{}\n⚠️ **Note:** Remember `[]` = Optional Parameter and `<>` = Required Paramter. Do *not* type these when using commands.", help_description));
