@@ -26,6 +26,7 @@ use std::env;
 use tokio;
 use tracing::{error, info, instrument};
 use tracing_subscriber;
+use crate::commands::info::help::*;
 
 #[tokio::main]
 #[instrument]
@@ -59,7 +60,8 @@ async fn main() {
     let framework = StandardFramework::new()
         .configure(|c| c.owners(owners).prefix("!"))
         .group(&MODERATION_GROUP)
-        .group(&UTILITY_GROUP);
+        .group(&UTILITY_GROUP)
+        .help(&HELP);
 
     info!("Commands loaded!");
 

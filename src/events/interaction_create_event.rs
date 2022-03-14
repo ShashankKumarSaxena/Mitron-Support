@@ -19,7 +19,6 @@ pub async fn interaction_create(ctx: Context, interaction: Interaction) {
             .unwrap()
             .clone();
 
-        println!("{}", role_id);
         let cur = sqlx::query("SELECT guild_id FROM reactionrole WHERE $1 = ANY(roles);")
             .bind(role_id as i64)
             .fetch_one(&db)

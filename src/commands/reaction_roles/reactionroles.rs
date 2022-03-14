@@ -9,8 +9,6 @@ use serenity::{
 
 use crate::utils::typemaps::PgConnectionPool;
 
-////////// INTERACTION STUFF ////////////
-
 struct ReactionRoles {
     role_id: u64,
     role_title: String,
@@ -25,8 +23,6 @@ impl ReactionRoles {
         b
     }
 }
-
-////////////////////////////////////////
 
 async fn send_timeout_msg(ctx: &Context, msg: &Message) -> CommandResult {
     msg.channel_id
