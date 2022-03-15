@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS starboard_message (
     guild_id BIGINT,
     author_id BIGINT,
     channel_id BIGINT,
+    star_msg_id BIGINT,
     id SERIAL,
     PRIMARY KEY(id)
 );

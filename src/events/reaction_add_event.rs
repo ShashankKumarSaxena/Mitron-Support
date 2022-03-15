@@ -1,5 +1,5 @@
 use crate::utils::typemaps::PgConnectionPool;
-use serenity::{builder::CreateEmbed, model::prelude::*, prelude::*};
+use serenity::{builder::CreateEmbed, http::CacheHttp, model::prelude::*, prelude::*};
 use sqlx::Executor;
 
 pub async fn reaction_add(ctx: &Context, add_reaction: Reaction) {
@@ -46,36 +46,52 @@ pub async fn reaction_add(ctx: &Context, add_reaction: Reaction) {
     }
 
     let flag = sqlx::query!(
-        "SELECT EXISTS(SELECT 1 FROM starboard_message WHERE message_id = $1);",
+        "SELECT EXISTS(SELECT 1 FROM starboard_message WHERE star_msg_id = $1);",
         add_reaction.message_id.0 as i64
     )
     .fetch_one(pool)
     .await
     .unwrap();
 
-    if flag.exists.unwrap() {
+    let starboard_reaction_message = add_reaction.message(&ctx.http).await.unwrap();
+    let starboard_message_channel = starboard_reaction_message.channel_id;
+
+    if flag.exists.unwrap() == true {
+        let mut starboard_msg_data = match sqlx::query!(
+            "SELECT * FROM starboard_message WHERE star_msg_id = $1",
+            add_reaction.message_id.0 as i64
+        )
+        .fetch_one(pool)
+        .await
+        {
+            Ok(data) => data,
+            Err(_) => {
+                return;
+            }
+        };
+
+        let mut star_message = ctx
+            .http
+            .get_message(
+                guild_data.starboard_channel.unwrap() as u64,
+                starboard_msg_data.message_id.unwrap() as u64,
+            )
+            .await
+            .unwrap();
+
+        star_message
+            .edit(&ctx.http, |m| {
+                m.content(format!(
+                    "💫 **{}** <#{}> ID: {}",
+                    stars, starboard_message_channel.0, starboard_reaction_message.id.0
+                ))
+            })
+            .await;
+
         return;
     }
 
-    sqlx::query!("INSERT INTO starboard_message (stars_count, message_id, guild_id, author_id, channel_id) VALUES ($1, $2, $3, $4, $5)", stars as i64, add_reaction.message_id.0 as i64, add_reaction.guild_id.unwrap().0 as i64, add_reaction.user_id.unwrap().0 as i64, add_reaction.channel_id.0 as i64)
-                    .execute(pool)
-                    .await
-                    .unwrap();
-
-    let mut starboard_msg_data = match sqlx::query!(
-        "SELECT * FROM starboard_message WHERE message_id = $1",
-        add_reaction.message_id.0 as i64
-    )
-    .fetch_one(pool)
-    .await
-    {
-        Ok(data) => data,
-        Err(_) => {
-            return;
-        }
-    };
-
-    if guild_data.starboard_threshold <= starboard_msg_data.stars_count {
+    if guild_data.starboard_threshold.unwrap() as u64 <= stars {
         // Post the message in the starboard channel
         let starboard_channel = ctx
             .http
@@ -83,24 +99,21 @@ pub async fn reaction_add(ctx: &Context, add_reaction: Reaction) {
             .await
             .unwrap();
 
-        let starboard_reaction_message = add_reaction.message(&ctx.http).await.unwrap();
         let starboard_author = ctx
             .http
             .get_member(
                 add_reaction.guild_id.unwrap().0,
-                starboard_msg_data.author_id.unwrap() as u64,
+                starboard_reaction_message.author.id.0 as u64,
             )
             .await
             .unwrap();
 
-        starboard_channel
+        let final_msg = starboard_channel
             .id()
             .send_message(&ctx.http, |m| {
                 m.content(format!(
                     "💫 **{}** <#{}> ID: {}",
-                    starboard_msg_data.stars_count.unwrap(),
-                    starboard_msg_data.channel_id.unwrap(),
-                    starboard_msg_data.message_id.unwrap()
+                    stars, starboard_message_channel.0, starboard_reaction_message.id.0
                 ));
                 m.embed(|e| {
                     e.author(|a| {
@@ -137,5 +150,9 @@ pub async fn reaction_add(ctx: &Context, add_reaction: Reaction) {
                 m
             })
             .await;
+        sqlx::query!("INSERT INTO starboard_message (stars_count, message_id, guild_id, author_id, channel_id, star_msg_id) VALUES ($1, $2, $3, $4, $5, $6)", stars as i64, final_msg.unwrap().id.0 as i64, add_reaction.guild_id.unwrap().0 as i64, add_reaction.user_id.unwrap().0 as i64, add_reaction.channel_id.0 as i64, starboard_reaction_message.id.0 as i64)
+                            .execute(pool)
+                            .await
+                            .unwrap();
     }
 }
