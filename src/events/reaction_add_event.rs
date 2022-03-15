@@ -1,5 +1,5 @@
 use crate::utils::typemaps::PgConnectionPool;
-use serenity::{model::prelude::*, prelude::*};
+use serenity::{builder::CreateEmbed, model::prelude::*, prelude::*};
 use sqlx::Executor;
 
 pub async fn reaction_add(ctx: &Context, add_reaction: Reaction) {
@@ -71,7 +71,8 @@ pub async fn reaction_add(ctx: &Context, add_reaction: Reaction) {
             .id()
             .send_message(&ctx.http, |m| {
                 m.content(format!(
-                    "💫 <#{}> ID: {}",
+                    "💫 **{}** <#{}> ID: {}",
+                    starboard_msg_data.stars_count.unwrap(),
                     starboard_msg_data.channel_id.unwrap(),
                     starboard_msg_data.message_id.unwrap()
                 ));
@@ -88,8 +89,25 @@ pub async fn reaction_add(ctx: &Context, add_reaction: Reaction) {
                         e.image(starboard_reaction_message.attachments[0].url.clone());
                     }
 
+                    if starboard_reaction_message.embeds.len() > 0 {
+                        let emb = CreateEmbed::from(starboard_reaction_message.embeds[0].clone());
+                        e.0.clone_from(&emb.0);
+                    }
+
+                    e.field(
+                        "Original",
+                        format!(
+                            "https://discordapp.com/channels/{}/{}/{}",
+                            guild_data.id,
+                            starboard_reaction_message.channel_id.0,
+                            starboard_reaction_message.id.0
+                        ),
+                        false,
+                    );
+
                     e
                 });
+
                 m
             })
             .await;
