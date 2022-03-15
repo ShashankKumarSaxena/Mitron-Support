@@ -3,9 +3,9 @@ use serenity::{
     framework::standard::{macros::command, Args, CommandResult},
     model::interactions::message_component::{ActionRow, ButtonStyle},
     model::prelude::*,
+    model::user::User,
     prelude::*,
 };
-use std::str::FromStr;
 
 use crate::utils::typemaps::PgConnectionPool;
 
@@ -18,8 +18,8 @@ impl ReactionRoles {
     fn make_button(&self) -> CreateButton {
         let mut b = CreateButton::default();
         b.custom_id(self.role_id);
-        b.emoji(ReactionType::from_str(self.role_title.clone().as_str()).unwrap());
-        b.style(ButtonStyle::Unknown);
+        b.label(self.role_title.clone());
+        b.style(ButtonStyle::Primary);
         b
     }
 }
@@ -205,7 +205,7 @@ async fn reactionroles(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
             .send_message(&ctx.http, |m| {
                 m.embed(|e| {
                     e.title("Reaction Roles");
-                    e.description(format!("Enter the emoji for role <@&{}>", role.0));
+                    e.description(format!("Enter the title for role <@&{}>", role.0));
                     e
                 })
             })
@@ -218,7 +218,7 @@ async fn reactionroles(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
                         .send_message(&ctx.http, |m| {
                             m.embed(|e| {
                                 e.title("Reaction Roles");
-                                e.description("You need to enter a emoji.");
+                                e.description("You need to enter a title.");
                                 e
                             })
                         })
@@ -419,8 +419,6 @@ async fn reactionroles(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
     }
 
     // Create reaction embed/prompt
-    let mut embed_desc: String = String::new();
-
     let rr_msg = channel
         .send_message(&ctx.http, |m| {
             m.embed(|e| {
@@ -429,7 +427,7 @@ async fn reactionroles(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
                 };
 
                 if !embed_description.is_empty() {
-                    embed_desc += format!("{}\n\n", embed_description).as_str();
+                    e.description(embed_description);
                 };
 
                 if !embed_image.is_empty() {
@@ -441,11 +439,12 @@ async fn reactionroles(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
                 }
 
                 for (idx, title) in role_titles.iter().enumerate() {
-                    embed_desc +=
-                        format!("{} - {}\n", title, role_descriptions[idx].clone()).as_str();
+                    e.field(
+                        format!("> {}", title),
+                        role_descriptions[idx].clone(),
+                        false,
+                    );
                 }
-
-                e.description(embed_desc);
 
                 e
             });
