@@ -16,6 +16,7 @@ use std::i64;
 async fn autorole(ctx: &Context, msg: &Message) -> CommandResult {
     msg.channel_id.send_message(&ctx.http, |m| {
         m.embed(|e| {
+            e.color(0x2F3136);
             e.title("Autorole Setup");
             e.description("`autorole-add`: Add a role to give to newly joined members.\n`autorole-remove`: Remove a role from autoroles.\n`autorole-list`: List all autoroles configured.");
             e
@@ -36,6 +37,7 @@ async fn autorole_add(ctx: &Context, msg: &Message, mut args: Args) -> CommandRe
             msg.channel_id
                 .send_message(&ctx.http, |m| {
                     m.embed(|e| {
+                        e.color(0x2F3136);
                         e.title("⚠️ Role not provided!");
                         e.description("Please mention a role to setup autoroles.");
                         e
@@ -66,6 +68,7 @@ async fn autorole_add(ctx: &Context, msg: &Message, mut args: Args) -> CommandRe
             msg.channel_id
                 .send_message(&ctx.http, |m| {
                     m.embed(|e| {
+                        e.color(0x2F3136);
                         e.title("⚠️ Role already addeds!");
                         e.description("The role you specified is already in the autoroles list.");
                         e
@@ -86,6 +89,7 @@ async fn autorole_add(ctx: &Context, msg: &Message, mut args: Args) -> CommandRe
     msg.channel_id
         .send_message(&ctx.http, |m| {
             m.embed(|e| {
+                e.color(0x2F3136);
                 e.title("Autorole Added");
                 e.description(format!(
                     "Successfully added <@&{}> role to autoroles!",
@@ -111,6 +115,7 @@ async fn autorole_remove(ctx: &Context, msg: &Message, mut args: Args) -> Comman
             msg.channel_id
                 .send_message(&ctx.http, |m| {
                     m.embed(|e| {
+                        e.color(0x2F3136);
                         e.title("⚠️ Role not provided!");
                         e.description("Please mention a role to remove from autoroles.");
                         e
@@ -142,6 +147,7 @@ async fn autorole_remove(ctx: &Context, msg: &Message, mut args: Args) -> Comman
             msg.channel_id
                 .send_message(&ctx.http, |m| {
                     m.embed(|e| {
+                        e.color(0x2F3136);
                         e.title("⚠️ Role not found!");
                         e.description("The role you specified is not in the autoroles list.");
                         e
@@ -161,6 +167,7 @@ async fn autorole_remove(ctx: &Context, msg: &Message, mut args: Args) -> Comman
     msg.channel_id
         .send_message(&ctx.http, |m| {
             m.embed(|e| {
+                e.color(0x2F3136);
                 e.title("Autorole Removed");
                 e.description(format!(
                     "Successfully removed <@&{}> role from autoroles!",
@@ -198,6 +205,7 @@ async fn autorole_list(ctx: &Context, msg: &Message) -> CommandResult {
             msg.channel_id
                 .send_message(&ctx.http, |m| {
                     m.embed(|e| {
+                        e.color(0x2F3136);
                         e.title("⚠️ No autoroles found!");
                         e.description("There are no autoroles configured for this server.");
                         e
@@ -212,6 +220,7 @@ async fn autorole_list(ctx: &Context, msg: &Message) -> CommandResult {
         msg.channel_id
             .send_message(&ctx.http, |m| {
                 m.embed(|e| {
+                    e.color(0x2F3136);
                     e.title("⚠️ No autoroles found!");
                     e.description("There are no autoroles configured for this server.");
                     e
@@ -229,6 +238,7 @@ async fn autorole_list(ctx: &Context, msg: &Message) -> CommandResult {
     msg.channel_id
         .send_message(&ctx.http, |m| {
             m.embed(|e| {
+                e.color(0x2F3136);
                 e.title("Autoroles");
                 e.description(s);
                 e

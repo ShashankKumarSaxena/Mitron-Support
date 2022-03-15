@@ -28,6 +28,7 @@ async fn send_timeout_msg(ctx: &Context, msg: &Message) -> CommandResult {
     msg.channel_id
         .send_message(&ctx.http, |m| {
             m.embed(|e| {
+                e.color(0x2F3136);
                 e.title("Reaction Roles");
                 e.description("⏰ Time's up. To start the setup again, run the command again.");
                 e
@@ -45,6 +46,7 @@ async fn reactionroles(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
     msg.channel_id
         .send_message(&ctx.http, |m| {
             m.embed(|e| {
+                e.color(0x2F3136);
                 e.title("Reaction Roles");
                 e.description("Mention the channel in which you want to setup reaction roles.");
                 e
@@ -63,6 +65,7 @@ async fn reactionroles(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
                 msg.channel_id
                     .send_message(&ctx.http, |m| {
                         m.embed(|e| {
+                            e.color(0x2F3136);
                             e.title("Reaction Roles");
                             e.description("You need to mention a channel.");
                             e
@@ -98,6 +101,8 @@ async fn reactionroles(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
                 msg.channel_id
                     .send_message(&ctx.http, |m| {
                         m.embed(|e| {
+                            e.color(0x2F3136);
+
                             e.title("Reaction Roles");
                             e.description("You need to enter a number.");
                             e
@@ -118,6 +123,8 @@ async fn reactionroles(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
         msg.channel_id
             .send_message(&ctx.http, |m| {
                 m.embed(|e| {
+                    e.color(0x2F3136);
+
                     e.title("Reaction Roles");
                     e.description("Invalid number of roles provided!");
                     e
@@ -129,6 +136,7 @@ async fn reactionroles(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
 
     msg.channel_id.send_message(&ctx.http, |m| {
         m.embed(|e| {
+            e.color(0x2F3136);
             e.title("Reaction Roles");
             e.description("Mention the roles which you want to add.\n*Make sure to mention the roles as provided above!*");
             e
@@ -148,6 +156,7 @@ async fn reactionroles(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
                     .send_message(&ctx.http, |m| {
                         m.embed(|e| {
                             e.title("Reaction Roles");
+                            e.color(0x2F3136);
                             e.description("You need to mention roles.");
                             e
                         })
@@ -159,6 +168,7 @@ async fn reactionroles(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
                     .send_message(&ctx.http, |m| {
                         m.embed(|e| {
                             e.title("Reaction Roles");
+                            e.color(0x2F3136);
                             e.description("You need to mention the roles as provided above.");
                             e
                         })
@@ -188,6 +198,7 @@ async fn reactionroles(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
                 .send_message(&ctx.http, |m| {
                     m.embed(|e| {
                         e.title("Reaction Roles");
+                        e.color(0x2F3136);
                         e.description("A role is above my top role. Please run the command again.");
                         e
                     })
@@ -205,6 +216,7 @@ async fn reactionroles(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
             .send_message(&ctx.http, |m| {
                 m.embed(|e| {
                     e.title("Reaction Roles");
+                    e.color(0x2F3136);
                     e.description(format!("Enter the title for role <@&{}>", role.0));
                     e
                 })
@@ -218,6 +230,7 @@ async fn reactionroles(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
                         .send_message(&ctx.http, |m| {
                             m.embed(|e| {
                                 e.title("Reaction Roles");
+                                e.color(0x2F3136);
                                 e.description("You need to enter a title.");
                                 e
                             })
@@ -241,6 +254,7 @@ async fn reactionroles(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
             .send_message(&ctx.http, |m| {
                 m.embed(|e| {
                     e.title("Reaction Roles");
+                    e.color(0x2F3136);
                     e.description(format!("Enter the description for role <@&{}>", role.0));
                     e
                 })
@@ -254,6 +268,7 @@ async fn reactionroles(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
                         .send_message(&ctx.http, |m| {
                             m.embed(|e| {
                                 e.title("Reaction Roles");
+                                e.color(0x2F3136);
                                 e.description("You need to enter a description.");
                                 e
                             })
@@ -276,6 +291,7 @@ async fn reactionroles(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
         .send_message(&ctx.http, |m| {
             m.embed(|e| {
                 e.title("Reaction Roles");
+                e.color(0x2F3136);
                 e.description("Enter the title of embed.\n*Enter **skip** to skip this step!*");
                 e
             })
@@ -288,6 +304,7 @@ async fn reactionroles(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
                 msg.channel_id
                     .send_message(&ctx.http, |m| {
                         m.embed(|e| {
+                            e.color(0x2F3136);
                             e.title("Reaction Roles");
                             e.description("You need to enter a title.");
                             e
@@ -325,6 +342,7 @@ async fn reactionroles(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
                     .send_message(&ctx.http, |m| {
                         m.embed(|e| {
                             e.title("Reaction Roles");
+                            e.color(0x2F3136);
                             e.description("You need to enter a description.");
                             e
                         })
@@ -345,6 +363,7 @@ async fn reactionroles(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
     msg.channel_id
         .send_message(&ctx.http, |m| {
             m.embed(|e| {
+                e.color(0x2F3136);
                 e.title("Reaction Roles");
                 e.description("Enter the image URL of embed.\n*Enter **skip** to skip this step!*");
                 e
@@ -358,6 +377,7 @@ async fn reactionroles(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
                 msg.channel_id
                     .send_message(&ctx.http, |m| {
                         m.embed(|e| {
+                            e.color(0x2F3136);
                             e.title("Reaction Roles");
                             e.description("You need to enter a image URL.");
                             e
@@ -379,6 +399,7 @@ async fn reactionroles(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
     msg.channel_id
         .send_message(&ctx.http, |m| {
             m.embed(|e| {
+                e.color(0x2F3136);
                 e.title("Reaction Roles");
                 e.description(
                     "Enter the thumbnail URL of embed.\n*Enter **skip** to skip this step!*",
@@ -394,6 +415,7 @@ async fn reactionroles(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
                 msg.channel_id
                     .send_message(&ctx.http, |m| {
                         m.embed(|e| {
+                            e.color(0x2F3136);
                             e.title("Reaction Roles");
                             e.description("You need to enter a URL.");
                             e
@@ -422,6 +444,7 @@ async fn reactionroles(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
     let rr_msg = channel
         .send_message(&ctx.http, |m| {
             m.embed(|e| {
+                e.color(0x2F3136);
                 if !embed_title.is_empty() {
                     e.title(embed_title);
                 };

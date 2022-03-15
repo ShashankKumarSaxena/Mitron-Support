@@ -64,6 +64,7 @@ pub async fn guild_member_addition(
         channel_id
             .send_message(&ctx.http, |m| {
                 m.embed(|e| {
+                    e.color(0x2F3136);
                     e.title(format!("Welcome to {}!", guild_name).as_str());
                     e.description(welcome_msg);
                     match img {
@@ -108,5 +109,4 @@ pub async fn guild_member_addition(
     }
 
     return Ok(());
-
 }

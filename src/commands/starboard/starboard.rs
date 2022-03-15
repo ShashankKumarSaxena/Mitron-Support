@@ -31,6 +31,7 @@ async fn enable(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
         msg.channel_id
             .send_message(&ctx.http, |m| {
                 m.embed(|e| {
+                    e.color(0x2F3136);
                     e.title("Starboard");
                     e.description("⚠️ You need to mention a channel to enable starboard in.");
                     e
@@ -63,6 +64,7 @@ async fn enable(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
     msg.channel_id
         .send_message(&ctx.http, |m| {
             m.embed(|e| {
+                e.color(0x2F3136);
                 e.title("Starboard");
                 e.description(format!(
                     "Starboard successfully enabled for this server!\nStarboard Channel: <#{}>\n*To reset starboard settings, use `!starboard disable` command.*",
@@ -101,6 +103,7 @@ async fn disable(ctx: &Context, msg: &Message) -> CommandResult {
     msg.channel_id
         .send_message(&ctx.http, |m| {
             m.embed(|e| {
+                e.color(0x2F3136);
                 e.title("Starboard");
                 e.description("Starboard successfully disabled for this server!");
                 e
@@ -137,6 +140,7 @@ async fn threshold(ctx: &Context, msg: &Message, mut args: Args) -> CommandResul
         msg.channel_id
             .send_message(&ctx.http, |m| {
                 m.embed(|e| {
+                    e.color(0x2F3136);
                     e.title("Starboard");
                     e.description(
                         "Starboard is not activated! To do so, use `!starboard enable` command.",
@@ -154,6 +158,7 @@ async fn threshold(ctx: &Context, msg: &Message, mut args: Args) -> CommandResul
             msg.channel_id
                 .send_message(&ctx.http, |m| {
                     m.embed(|e| {
+                        e.color(0x2F3136);
                         e.title("Starboard");
                         e.description("Please enter a number greater than 0!");
                         e
@@ -175,6 +180,7 @@ async fn threshold(ctx: &Context, msg: &Message, mut args: Args) -> CommandResul
     msg.channel_id
         .send_message(&ctx.http, |m| {
             m.embed(|e| {
+                e.color(0x2F3136);
                 e.title("Starboard");
                 e.description(format!(
                     "Starboard star threshold updated to {}.",
@@ -212,6 +218,7 @@ async fn config(ctx: &Context, msg: &Message) -> CommandResult {
         msg.channel_id
             .send_message(&ctx.http, |m| {
                 m.embed(|e| {
+                    e.color(0x2F3136);
                     e.title("Starboard");
                     e.description(
                         "Starboard is not activated! To do so, use `!starboard enable` command.",
@@ -226,6 +233,7 @@ async fn config(ctx: &Context, msg: &Message) -> CommandResult {
     msg.channel_id
         .send_message(&ctx.http, |m| {
             m.embed(|e| {
+                e.color(0x2F3136);
                 e.title("Starboard Config");
                 e.field(
                     "Starboard Activate",

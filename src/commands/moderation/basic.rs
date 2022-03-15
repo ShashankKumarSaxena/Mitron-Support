@@ -22,6 +22,7 @@ async fn kick(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
             msg.channel_id
                 .send_message(&ctx.http, |m| {
                     m.embed(|e| {
+                        e.color(0x2F3136);
                         e.description("❌ You need to mention a member to kick.");
                         e
                     })
@@ -66,6 +67,7 @@ async fn kick(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
     msg.channel_id
         .send_message(&ctx.http, |m| {
             m.embed(|e| {
+                e.color(0x2F3136);
                 if failed_txt.is_empty() {
                     e.description("✅ Successfully kicked members.");
                 } else {
@@ -97,6 +99,7 @@ async fn ban(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
             msg.channel_id
                 .send_message(&ctx.http, |m| {
                     m.embed(|e| {
+                        e.color(0x2F3136);
                         e.description("❌ You need to mention a member to ban.");
                         e
                     })
@@ -140,6 +143,7 @@ async fn ban(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
     msg.channel_id
         .send_message(&ctx.http, |m| {
             m.embed(|e| {
+                e.color(0x2F3136);
                 if failed_txt.is_empty() {
                     e.description("✅ Successfully banned members.");
                 } else {
@@ -168,6 +172,7 @@ async fn unban(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
             msg.channel_id
                 .send_message(&ctx.http, |m| {
                     m.embed(|e| {
+                        e.color(0x2F3136);
                         e.description("❌ You need to mention a user to unban.");
                         e
                     })
@@ -184,6 +189,7 @@ async fn unban(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
             msg.channel_id
                 .send_message(&ctx.http, |m| {
                     m.embed(|e| {
+                        e.color(0x2F3136);
                         e.description("❌ User not found.");
                         e
                     })
@@ -200,6 +206,7 @@ async fn unban(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
                 msg.channel_id
                     .send_message(&ctx.http, |m| {
                         m.embed(|e| {
+                            e.color(0x2F3136);
                             e.description("❌ Failed to unban user.");
                             e
                         })
@@ -212,6 +219,7 @@ async fn unban(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
                 msg.channel_id
                     .send_message(&ctx.http, |m| {
                         m.embed(|e| {
+                            e.color(0x2F3136);
                             e.description(
                                 format!("✅ Successfully unbanned {}.", b_user.name).as_str(),
                             );

@@ -7,6 +7,7 @@ pub mod events;
 pub mod listeners;
 pub mod utils;
 
+use crate::commands::info::help::*;
 use crate::utils::typemaps::PgConnectionPool;
 use cmds::{MODERATION_GROUP, UTILITY_GROUP};
 use dotenv;
@@ -26,7 +27,6 @@ use std::env;
 use tokio;
 use tracing::{error, info, instrument};
 use tracing_subscriber;
-use crate::commands::info::help::*;
 
 #[tokio::main]
 #[instrument]

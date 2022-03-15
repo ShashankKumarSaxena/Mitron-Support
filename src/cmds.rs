@@ -1,8 +1,8 @@
 use crate::commands::moderation::basic::*;
 use crate::commands::reaction_roles::reactionroles::*;
+use crate::commands::starboard::starboard::*;
 use crate::commands::welcomer::autoroles::*;
 use crate::commands::welcomer::welcome::*;
-use crate::commands::starboard::starboard::*;
 use serenity::framework::standard::macros::group;
 
 // All commands related with moderation

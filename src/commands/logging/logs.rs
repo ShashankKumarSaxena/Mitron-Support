@@ -37,6 +37,7 @@ async fn logs(ctx: &Context, msg: &Message) -> CommandResult {
             msg.channel_id
                 .send_message(&ctx.http, |m| {
                     m.embed(|emb| {
+                        emb.color(0x2F3136);
                         emb.title("Logs Configuration");
                         for log_type in logs_vec.iter() {
                             let channel_value;
@@ -101,6 +102,7 @@ async fn log_toggle(ctx: &Context, msg: &Message, mut args: Args) -> CommandResu
         msg.channel_id.send_message(&ctx.http, |m| {
             m.embed(|emb| {
                 emb.title("Log Toggle");
+                emb.color(0x2F3136);
                 emb.description(response);
                 emb
             })
@@ -176,6 +178,7 @@ async fn log_toggle(ctx: &Context, msg: &Message, mut args: Args) -> CommandResu
     if toggle_bool {
         msg.channel_id.send_message(&ctx.http, |m| {
             m.embed(|emb| {
+                emb.color(0x2F3136);
                 emb.title("Log Toggle");
                 emb.description(format!("✅ Successfully enabled {}!", log_choice));
                 emb
@@ -184,6 +187,7 @@ async fn log_toggle(ctx: &Context, msg: &Message, mut args: Args) -> CommandResu
     } else {
         msg.channel_id.send_message(&ctx.http, |m| {
             m.embed(|emb| {
+                emb.color(0x2F3136);
                 emb.title("Log Toggle");
                 emb.description(format!("✅ Successfully disabled {}!", log_choice));
                 emb
@@ -209,6 +213,7 @@ async fn log_channel(ctx: &Context, msg: &Message, mut args: Args) -> CommandRes
 
         msg.channel_id.send_message(&ctx.http, |m| {
             m.embed(|emb| {
+                emb.color(0x2F3136);
                 emb.title("Log Toggle");
                 emb.description(response);
                 emb
@@ -223,6 +228,7 @@ async fn log_channel(ctx: &Context, msg: &Message, mut args: Args) -> CommandRes
     if !log_types.contains(&log_choice.as_str()) {
         msg.channel_id.send_message(&ctx.http, |m| {
             m.embed(|emb| {
+                emb.color(0x2F3136);
                 emb.description("Invalid log type passed!");
                 emb
             })

@@ -18,7 +18,7 @@ async fn help(
     groups: &[&'static CommandGroup],
     owners: HashSet<UserId>,
 ) -> CommandResult {
-    let _ = crate::utils::custom_help::with_embeds(ctx, msg, args, help_options, groups, owners)
-        .await;
+    let _ =
+        crate::utils::custom_help::with_embeds(ctx, msg, args, help_options, groups, owners).await;
     Ok(())
 }

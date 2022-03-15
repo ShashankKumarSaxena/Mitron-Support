@@ -116,6 +116,7 @@ pub async fn reaction_add(ctx: &Context, add_reaction: Reaction) {
                     stars, starboard_message_channel.0, starboard_reaction_message.id.0
                 ));
                 m.embed(|e| {
+                    e.color(0x2F3136);
                     e.author(|a| {
                         a.name(&starboard_author.user.name);
                         a.icon_url(&starboard_author.user.face());

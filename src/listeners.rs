@@ -3,7 +3,8 @@ use tracing::instrument;
 
 use crate::events::{
     guild_create_event::guild_create, guild_member_addition_event::guild_member_addition,
-    ready_event::ready, interaction_create_event::interaction_create, reaction_add_event::reaction_add,
+    interaction_create_event::interaction_create, reaction_add_event::reaction_add,
+    ready_event::ready,
 };
 
 pub struct Handler;

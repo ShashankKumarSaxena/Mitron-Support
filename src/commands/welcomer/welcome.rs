@@ -21,6 +21,7 @@ async fn welcome(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult 
                 .send_message(&ctx.http, |m| {
                     m.embed(|e| {
                         e.title("⚠️ Channel not provided!");
+                        e.color(0x2F3136);
                         e.description("Please mention a channel to set up welcome messages.");
                         e
                     })
@@ -50,6 +51,8 @@ async fn welcome(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult 
             msg.channel_id
                 .send_message(&ctx.http, |m| {
                     m.embed(|e| {
+                        e.color(0x2F3136);
+
                         e.description(
                             format!(
                                 "✅ Successfully set the welcome channel to <#{}>",
@@ -98,6 +101,7 @@ async fn welcome_disable(ctx: &Context, msg: &Message, _args: Args) -> CommandRe
                     msg.channel_id
                         .send_message(&ctx.http, |m| {
                             m.embed(|e| {
+                                e.color(0x2F3136);
                                 e.title("⚠️ Welcome channel not set!");
                                 e.description("Please set a welcome channel first.");
                                 e
@@ -116,6 +120,7 @@ async fn welcome_disable(ctx: &Context, msg: &Message, _args: Args) -> CommandRe
             msg.channel_id
                 .send_message(&ctx.http, |m| {
                     m.embed(|e| {
+                        e.color(0x2F3136);
                         e.description("✅ Successfully disabled welcome messages!");
                         e
                     })
@@ -150,6 +155,7 @@ async fn welcome_message(ctx: &Context, msg: &Message, mut args: Args) -> Comman
             if args.is_empty() {
                 msg.channel_id.send_message(&ctx.http, |m| {
                     m.embed(|e| {
+                        e.color(0x2F3136);
                         e.title("📝 Edit Welcome Messages");
                         e.description("To edit welcome message, you need to follow the instructions given below:\n\nℹ️ **Instructions**:\n`->` If you want that the joined member must get mentioned in the message, then add `<<member>>` in the message where you want the member to get mentioned.\n\n`->` You can mention channels in the message too.");
                         e
@@ -173,6 +179,7 @@ async fn welcome_message(ctx: &Context, msg: &Message, mut args: Args) -> Comman
             msg.channel_id
                 .send_message(&ctx.http, |m| {
                     m.embed(|e| {
+                        e.color(0x2F3136);
                         e.description("✅ Successfully set the welcome message!");
                         e
                     })
@@ -207,6 +214,7 @@ async fn welcome_image(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
             if args.is_empty() {
                 msg.channel_id.send_message(&ctx.http, |m| {
                     m.embed(|e| {
+                        e.color(0x2F3136);
                         e.description("Please provide a image URL. If you want to reset welcome settings use `!welcome-disable` command!");
                         e
                     })
@@ -223,6 +231,7 @@ async fn welcome_image(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
             msg.channel_id
                 .send_message(&ctx.http, |m| {
                     m.embed(|e| {
+                        e.color(0x2F3136);
                         e.description("✅ Successfully set the welcome image!");
                         e
                     })

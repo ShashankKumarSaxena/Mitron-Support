@@ -45,7 +45,7 @@ async fn send_suggestion_embed(
     channel_id
         .send_message(&http, |m| {
             m.embed(|e| {
-                e.colour(colour);
+                e.colour(0x2F3136);
                 e.description(text);
                 e
             });
@@ -63,7 +63,7 @@ async fn send_error_embed(
     channel_id
         .send_message(&http, |m| {
             m.embed(|e| {
-                e.colour(colour);
+                e.colour(0x2F3136);
                 e.description(input);
                 e
             });
@@ -102,9 +102,12 @@ fn flatten_group_to_string(
 
     let mut joined_commands = String::from(format!("*{}*\n", group.summary.unwrap()));
 
-    joined_commands.push_str(group
-        .command_names
-        .join(&format!("{}{}", sep, &repeated_indent_str)).as_str());
+    joined_commands.push_str(
+        group
+            .command_names
+            .join(&format!("{}{}", sep, &repeated_indent_str))
+            .as_str(),
+    );
 
     if !group.command_names.is_empty() {
         joined_commands.insert_str(0, &repeated_indent_str);
@@ -140,8 +143,8 @@ async fn send_grouped_commands_embed(
     groups: &[GroupCommandsPair],
     colour: Colour,
 ) -> Result<Message, Error> {
-
     let mut embed = builder::CreateEmbed::default();
+    embed.color(0x2F3136);
 
     embed.author(|a| {
         a.name(String::from("Miत्रों Support Help Command"));
