@@ -31,10 +31,11 @@ CREATE TABLE IF NOT EXISTS reactionrole (
 );
 
 CREATE TABLE IF NOT EXISTS starboard_message (
+    stars_count INTEGER,
     message_id BIGINT,
     guild_id BIGINT,
     author_id BIGINT,
     channel_id BIGINT,
-    id SERIAL INTEGER,
+    id SERIAL,
     PRIMARY KEY(id)
 );
