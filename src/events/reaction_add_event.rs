@@ -62,13 +62,13 @@ pub async fn reaction_add(ctx: &Context, add_reaction: Reaction) {
             .http
             .get_member(
                 add_reaction.guild_id.unwrap().0,
-                starboard_msg_data.author_id,
+                starboard_msg_data.author_id.unwrap() as u64,
             )
             .await
             .unwrap();
 
         starboard_channel
-            .id
+            .id()
             .send_message(&ctx.http, |m| {
                 m.content(format!(
                     "💫 <#{}> ID: {}",
@@ -85,7 +85,7 @@ pub async fn reaction_add(ctx: &Context, add_reaction: Reaction) {
                     e.description(&starboard_reaction_message.content);
 
                     if starboard_reaction_message.attachments.len() > 0 {
-                        e.image(starboard_reaction_message.attachments[0].url);
+                        e.image(starboard_reaction_message.attachments[0].url.clone());
                     }
 
                     e
