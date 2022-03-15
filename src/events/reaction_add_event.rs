@@ -32,6 +32,36 @@ pub async fn reaction_add(ctx: &Context, add_reaction: Reaction) {
         return;
     }
 
+    let reactions = add_reaction.message(&ctx.http).await.unwrap().reactions;
+    let stars = match reactions
+        .into_iter()
+        .find(|x| x.reaction_type.as_data() == "⭐")
+    {
+        Some(r) => r.count,
+        None => 0,
+    };
+
+    if stars < guild_data.starboard_threshold.unwrap() as u64 {
+        return;
+    }
+
+    let flag = sqlx::query!(
+        "SELECT EXISTS(SELECT 1 FROM starboard_message WHERE message_id = $1);",
+        add_reaction.message_id.0 as i64
+    )
+    .fetch_one(pool)
+    .await
+    .unwrap();
+
+    if flag.exists.unwrap() {
+        return;
+    }
+
+    sqlx::query!("INSERT INTO starboard_message (stars_count, message_id, guild_id, author_id, channel_id) VALUES ($1, $2, $3, $4, $5)", stars as i64, add_reaction.message_id.0 as i64, add_reaction.guild_id.unwrap().0 as i64, add_reaction.user_id.unwrap().0 as i64, add_reaction.channel_id.0 as i64)
+                    .execute(pool)
+                    .await
+                    .unwrap();
+
     let mut starboard_msg_data = match sqlx::query!(
         "SELECT * FROM starboard_message WHERE message_id = $1",
         add_reaction.message_id.0 as i64
@@ -41,10 +71,6 @@ pub async fn reaction_add(ctx: &Context, add_reaction: Reaction) {
     {
         Ok(data) => data,
         Err(_) => {
-            sqlx::query!("INSERT INTO starboard_message (stars_count, message_id, guild_id, author_id, channel_id) VALUES ($1, $2, $3, $4, $5)", 1, add_reaction.message_id.0 as i64, add_reaction.guild_id.unwrap().0 as i64, add_reaction.user_id.unwrap().0 as i64, add_reaction.channel_id.0 as i64)
-                    .execute(pool)
-                    .await
-                    .unwrap();
             return;
         }
     };
@@ -97,7 +123,7 @@ pub async fn reaction_add(ctx: &Context, add_reaction: Reaction) {
                     e.field(
                         "Original",
                         format!(
-                            "https://discordapp.com/channels/{}/{}/{}",
+                            "[Jump!](https://discordapp.com/channels/{}/{}/{})",
                             guild_data.id,
                             starboard_reaction_message.channel_id.0,
                             starboard_reaction_message.id.0
