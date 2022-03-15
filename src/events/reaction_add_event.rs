@@ -72,7 +72,8 @@ pub async fn reaction_add(ctx: &Context, add_reaction: Reaction) {
             .send_message(&ctx.http, |m| {
                 m.content(format!(
                     "💫 <#{}> ID: {}",
-                    starboard_msg_data.channel_id, starboard_msg_data.message_id
+                    starboard_msg_data.channel_id.unwrap(),
+                    starboard_msg_data.message_id.unwrap()
                 ));
                 m.embed(|e| {
                     e.author(|a| {
