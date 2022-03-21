@@ -3,6 +3,7 @@ use crate::commands::reaction_roles::reactionroles::*;
 use crate::commands::starboard::starboard::*;
 use crate::commands::welcomer::autoroles::*;
 use crate::commands::welcomer::welcome::*;
+use crate::commands::status::botstatus::*;
 use serenity::framework::standard::macros::group;
 
 // All commands related with moderation
@@ -23,7 +24,8 @@ pub struct Moderation;
     autorole_add,
     autorole_remove,
     autorole_list,
-    starboard
+    starboard,
+    watcher
 )]
 #[summary = "Utility Commands"]
 pub struct Utility;

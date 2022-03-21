@@ -1,13 +1,20 @@
 use serenity::{async_trait, model::prelude::*, prelude::*};
 use tracing::instrument;
 
+use crate::commands::status::task::reset_bot_status;
 use crate::events::{
     guild_create_event::guild_create, guild_member_addition_event::guild_member_addition,
     interaction_create_event::interaction_create, reaction_add_event::reaction_add,
     ready_event::ready,
 };
+use std::sync::{
+    atomic::{AtomicBool, Ordering},
+    Arc,
+};
 
-pub struct Handler;
+pub struct Handler {
+    pub is_loop_running: AtomicBool,
+}
 
 #[async_trait]
 impl EventHandler for Handler {
@@ -38,5 +45,21 @@ impl EventHandler for Handler {
     // Reaction Add Event
     async fn reaction_add(&self, _ctx: Context, _reaction: Reaction) {
         reaction_add(&_ctx, _reaction).await;
+    }
+
+    // Cache Ready Event
+    async fn cache_ready(&self, ctx: Context, _guilds: Vec<GuildId>) {
+        let ctx = Arc::new(ctx);
+
+        if !self.is_loop_running.load(Ordering::Relaxed) {
+            tokio::spawn(async move {
+                loop {
+                    reset_bot_status(Arc::clone(&ctx)).await;
+                    tokio::time::sleep(std::time::Duration::from_secs(60)).await;
+                }
+            });
+
+            self.is_loop_running.store(true, Ordering::Relaxed);
+        }
     }
 }

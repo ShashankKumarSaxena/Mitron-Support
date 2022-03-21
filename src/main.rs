@@ -27,6 +27,10 @@ use std::env;
 use tokio;
 use tracing::{error, info, instrument};
 use tracing_subscriber;
+use std::sync::{
+    atomic::{AtomicBool, Ordering},
+    Arc,
+};
 
 #[tokio::main]
 #[instrument]
@@ -89,7 +93,7 @@ async fn main() {
     let mut bot = Client::builder(&TOKEN)
         .application_id(APPLICATION_ID)
         .framework(framework)
-        .event_handler(Handler)
+        .event_handler(Handler { is_loop_running: AtomicBool::new(false), })
         .intents(GatewayIntents::all())
         .await
         .expect("Error creating bot instance.");

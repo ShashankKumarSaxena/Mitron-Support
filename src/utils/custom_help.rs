@@ -183,7 +183,7 @@ async fn send_single_command_embed(
             m.embed(|embed| {
                 // embed.title(&command.name);
                 embed.title(&command.group_name);
-                embed.colour(colour);
+                embed.colour(0x2F3136);
                 embed.author(|a| {
                     a.name(String::from("Miत्रों Support Help Command"));
                     a.icon_url(String::from(

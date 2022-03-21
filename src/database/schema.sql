@@ -19,6 +19,8 @@ CREATE TABLE IF NOT EXISTS guildconfig (
     starboard_threshold INTEGER DEFAULT 5,
     starboard_channel BIGINT,
     starboard_activate BOOLEAN DEFAULT FALSE,
+    watcher_channel BIGINT,
+    watcher_message BIGINT,
     PRIMARY KEY(id)
 );
 
