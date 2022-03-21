@@ -46,26 +46,46 @@ pub async fn reset_bot_status(ctx: Arc<Context>) {
 
         let request_url = env::var("STATUS_API").unwrap();
 
-        let response = reqwest::get(request_url).await.unwrap();
-        let status: BotStatus = response.json::<BotStatus>().await.unwrap();
+        let response = reqwest::get(request_url).await;
 
-        let mut status_emoji: &str;
+        match response {
+            Ok(response) => {
+                let status: BotStatus = response.json::<BotStatus>().await.unwrap();
+                let mut status_emoji: &str;
 
-        if status.status == "alive" {
-            status_emoji = "🟢 | Online";
-        } else {
-            status_emoji = "🔴 | Offline";
+                if status.status == "alive" {
+                    status_emoji = "🟢 | Online";
+                } else {
+                    status_emoji = "🔴 | Offline";
+                }
+
+                message
+                    .edit(&ctx.http, |m| {
+                        m.embed(|e| {
+                            e.title("Miत्रों Status");
+                            e.description(format!(
+                                "```\n{}\n```\n**🏓 | Ping**: `{}`ms\n<:Servers:950428606755143770> **| Servers**: {}\n**🤖 | Shards**: {}",
+                                status_emoji, status.ping, status.servers, status.shards
+                            ));
+                            e.color(0x2F3136);
+                            e.thumbnail(status.avatar);
+                            e
+                        })
+                    })
+                    .await;
+            }
+            Err(_) => {
+                message
+                    .edit(&ctx.http, |m| {
+                        m.embed(|e| {
+                            e.title("Miत्रों Status");
+                            e.description("```\n🔴 | Offline\n```\n*Bot is currently offline. Please keep patience till the developers make it back on.*");
+                            e.color(0x2F3136);
+                            e
+                        })
+                    })
+                    .await;
+            }
         }
-
-        message
-            .edit(&ctx.http, |m| {
-                m.embed(|e| {
-                    e.title("Miत्रों Status");
-                    e.description(format!("{} | Ping: `{}`ms", status_emoji, status.ping));
-                    e.color(0x2F3136);
-                    e
-                })
-            })
-            .await;
     }
 }

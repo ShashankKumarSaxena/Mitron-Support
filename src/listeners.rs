@@ -55,7 +55,7 @@ impl EventHandler for Handler {
             tokio::spawn(async move {
                 loop {
                     reset_bot_status(Arc::clone(&ctx)).await;
-                    tokio::time::sleep(std::time::Duration::from_secs(60)).await;
+                    tokio::time::sleep(std::time::Duration::from_secs(30)).await;
                 }
             });
 

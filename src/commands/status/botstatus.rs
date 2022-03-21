@@ -1,5 +1,5 @@
-use reqwest::Error;
 use crate::utils::typemaps::PgConnectionPool;
+use reqwest::Error;
 use serde::{Deserialize, Serialize};
 use serenity::{
     framework::standard::{macros::command, Args, CommandResult},
@@ -14,6 +14,7 @@ pub struct BotStatus {
     pub ping: u32,
     pub shards: u32,
     pub servers: u32,
+    pub avatar: String,
 }
 
 #[command]
@@ -61,8 +62,12 @@ async fn watcher(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult 
         .send_message(&ctx.http, |m| {
             m.embed(|e| {
                 e.title("Miत्रों Status");
-                e.description(format!("{} | Ping: `{}`ms", status_emoji, status.ping));
+                e.description(format!(
+                    "```\n{}\n```\n**🏓 | Ping**: `{}`ms\n<:Servers:950428606755143770> **| Servers**: {}\n**🤖 | Shards**: {}",
+                    status_emoji, status.ping, status.servers, status.shards
+                ));
                 e.color(0x2F3136);
+                e.thumbnail(status.avatar);
                 e
             })
         })
