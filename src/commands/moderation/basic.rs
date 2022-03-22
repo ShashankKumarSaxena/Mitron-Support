@@ -319,7 +319,6 @@ async fn announce(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult
             msg.channel_id
                 .send_message(&ctx.http, |m| {
                     m.embed(|e| {
-                        e.title("Reaction Roles");
                         e.color(0x2F3136);
                         e.description(
                             "Enter the title of embed.\n*Enter **skip** to skip this step!*",
