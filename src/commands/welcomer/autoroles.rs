@@ -57,28 +57,28 @@ async fn autorole_add(ctx: &Context, msg: &Message, mut args: Args) -> CommandRe
         .unwrap()
         .clone();
 
-    let v = sqlx::query("SELECT id FROM guildconfig WHERE $1 = ANY(autoroles) AND id = $2")
-        .bind(role.0 as i64)
-        .bind(msg.guild_id.unwrap().0 as i64)
-        .fetch_one(&db)
-        .await?;
+    // let v = sqlx::query("SELECT id FROM guildconfig WHERE $1 = ANY(autoroles) AND id = $2")
+    //     .bind(role.0 as i64)
+    //     .bind(msg.guild_id.unwrap().0 as i64)
+    //     .fetch_one(&db)
+    //     .await?;
 
-    match v.try_get::<i64, _>("id") {
-        Ok(_) => {
-            msg.channel_id
-                .send_message(&ctx.http, |m| {
-                    m.embed(|e| {
-                        e.color(0x2F3136);
-                        e.title("⚠️ Role already addeds!");
-                        e.description("The role you specified is already in the autoroles list.");
-                        e
-                    })
-                })
-                .await?;
-            return Ok(());
-        }
-        Err(_) => {}
-    }
+    // match v.try_get::<i64, _>("id") {
+    //     Ok(_) => {
+    //         msg.channel_id
+    //             .send_message(&ctx.http, |m| {
+    //                 m.embed(|e| {
+    //                     e.color(0x2F3136);
+    //                     e.title("⚠️ Role already added!");
+    //                     e.description("The role you specified is already in the autoroles list.");
+    //                     e
+    //                 })
+    //             })
+    //             .await?;
+    //         return Ok(());
+    //     }
+    //     Err(_) => {}
+    // }
 
     sqlx::query("UPDATE guildconfig SET autoroles = ARRAY_APPEND(autoroles, $1) WHERE id = $2;")
         .bind(role.0 as i64)
