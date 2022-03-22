@@ -25,7 +25,9 @@ pub struct Moderation;
     autorole_remove,
     autorole_list,
     starboard,
-    watcher
+    watcher,
+    announce,
+    announce_simple
 )]
 #[summary = "Utility Commands"]
 pub struct Utility;
