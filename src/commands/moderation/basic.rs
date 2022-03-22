@@ -234,3 +234,232 @@ async fn unban(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
     }
     Ok(())
 }
+
+#[command("announce-simple")]
+#[description("Announce something in a channel with bot in simple text.")]
+#[usage("<channel> <text>")]
+#[example("#announcements Today is holiday!")]
+#[only_in(guilds)]
+#[required_permissions("MANAGE_GUILD")]
+async fn announce_simple(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
+    match args.single::<ChannelId>() {
+        Err(_) => {
+            msg.channel_id
+                .say(
+                    &ctx.http,
+                    "Please mention a channel to send announcement in!",
+                )
+                .await?;
+
+            return Ok(());
+        }
+        Ok(ch) => {
+            let text = args.rest();
+            if text.is_empty() {
+                msg.channel_id
+                    .say(&ctx.http, "Provide a text to announce!")
+                    .await?;
+                return Ok(());
+            }
+            // match ch.say(&ctx.http, text).await {
+            match ch
+                .send_message(&ctx.http, |m| {
+                    m.content(text);
+                    m
+                })
+                .await
+            {
+                Ok(_) => {
+                    msg.channel_id
+                        .say(&ctx.http, "Successfully sent announcement!")
+                        .await?;
+                }
+                Err(_) => {
+                    msg.channel_id
+                        .say(
+                            &ctx.http,
+                            "Can't send message to that channel! Please check my permissions.",
+                        )
+                        .await?;
+                }
+            }
+        }
+    };
+
+    Ok(())
+}
+
+#[command]
+#[description("Announce something in a channel from bot in a embed.")]
+#[usage("<channel> <text>")]
+#[example("#announcements Today is holiday!")]
+#[only_in(guilds)]
+#[required_permissions("MANAGE_GUILD")]
+async fn announce(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
+    match args.single::<ChannelId>() {
+        Err(_) => {
+            msg.channel_id
+                .say(
+                    &ctx.http,
+                    "Please mention a channel to send announcement in!",
+                )
+                .await?;
+
+            return Ok(());
+        }
+        Ok(ch) => {
+            let text = args.rest();
+            if text.is_empty() {
+                msg.channel_id
+                    .say(&ctx.http, "Provide a text to announce!")
+                    .await?;
+                return Ok(());
+            }
+
+            msg.channel_id
+                .send_message(&ctx.http, |m| {
+                    m.embed(|e| {
+                        e.title("Reaction Roles");
+                        e.color(0x2F3136);
+                        e.description(
+                            "Enter the title of embed.\n*Enter **skip** to skip this step!*",
+                        );
+                        e
+                    })
+                })
+                .await?;
+
+            let embed_title = match msg.author.await_reply(&ctx).await {
+                Some(content) => {
+                    if content.content.is_empty() {
+                        msg.channel_id
+                            .send_message(&ctx.http, |m| {
+                                m.embed(|e| {
+                                    e.color(0x2F3136);
+                                    e.description("You need to enter a title.");
+                                    e
+                                })
+                            })
+                            .await?;
+                        return Ok(());
+                    } else if content.content.to_lowercase() == "skip" {
+                        "".to_string()
+                    } else {
+                        content.content.parse::<String>().unwrap()
+                    }
+                }
+                None => String::from(""),
+            };
+
+            msg.channel_id
+                .send_message(&ctx.http, |m| {
+                    m.embed(|e| {
+                        e.color(0x2F3136);
+                        e.description(
+                            "Enter the image URL of embed.\n*Enter **skip** to skip this step!*",
+                        );
+                        e
+                    })
+                })
+                .await?;
+
+            let embed_image = match msg.author.await_reply(&ctx).await {
+                Some(content) => {
+                    if content.content.is_empty() {
+                        msg.channel_id
+                            .send_message(&ctx.http, |m| {
+                                m.embed(|e| {
+                                    e.color(0x2F3136);
+                                    e.description("You need to enter a image URL.");
+                                    e
+                                })
+                            })
+                            .await?;
+                        return Ok(());
+                    } else if content.content.to_lowercase() == "skip" {
+                        "".to_string()
+                    } else {
+                        content.content.parse::<String>().unwrap()
+                    }
+                }
+                None => String::from(""),
+            };
+
+            msg.channel_id
+                .send_message(&ctx.http, |m| {
+                    m.embed(|e| {
+                        e.color(0x2F3136);
+                        e.description(
+                        "Enter the thumbnail URL of embed.\n*Enter **skip** to skip this step!*",
+                    );
+                        e
+                    })
+                })
+                .await?;
+
+            let embed_thumbnail = match msg.author.await_reply(&ctx).await {
+                Some(content) => {
+                    if content.content.is_empty() {
+                        msg.channel_id
+                            .send_message(&ctx.http, |m| {
+                                m.embed(|e| {
+                                    e.color(0x2F3136);
+                                    e.description("You need to enter a URL.");
+                                    e
+                                })
+                            })
+                            .await?;
+                        return Ok(());
+                    } else if content.content.to_lowercase() == "skip" {
+                        "".to_string()
+                    } else {
+                        content.content.parse::<String>().unwrap()
+                    }
+                }
+                None => String::from(""),
+            };
+
+            // match ch.say(&ctx.http, text).await {
+            match ch
+                .send_message(&ctx.http, |m| {
+                    m.embed(|e| {
+                        e.description(text);
+                        e.color(0x2F3136);
+
+                        if !embed_image.is_empty() {
+                            e.image(embed_image);
+                        }
+
+                        if !embed_thumbnail.is_empty() {
+                            e.thumbnail(embed_thumbnail);
+                        }
+
+                        if !embed_title.is_empty() {
+                            e.title(embed_title);
+                        }
+
+                        e
+                    });
+                    m
+                })
+                .await
+            {
+                Ok(_) => {
+                    msg.channel_id
+                        .say(&ctx.http, "Successfully sent announcement!")
+                        .await?;
+                }
+                Err(_) => {
+                    msg.channel_id
+                        .say(
+                            &ctx.http,
+                            "Can't send message to that channel! Please check my permissions.",
+                        )
+                        .await?;
+                }
+            }
+        }
+    };
+
+    Ok(())
+}
