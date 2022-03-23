@@ -192,8 +192,29 @@ async fn reactionroles(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
         )
         .await
         .unwrap();
-    for role in roles.clone() {
-        if role > client_mem.roles[0] {
+
+    let top_role_id = client_mem.highest_role_info(&ctx).await.unwrap();
+
+    for roleid in roles.clone() {
+        let role = msg
+            .guild_id
+            .unwrap()
+            .roles(&ctx.http)
+            .await
+            .unwrap()
+            .get(&roleid)
+            .unwrap().clone();
+
+        let top_role = msg
+            .guild_id
+            .unwrap()
+            .roles(&ctx.http)
+            .await
+            .unwrap()
+            .get(&top_role_id.0)
+            .unwrap().clone();
+
+        if role > top_role {
             msg.channel_id
                 .send_message(&ctx.http, |m| {
                     m.embed(|e| {
