@@ -147,7 +147,7 @@ async fn send_grouped_commands_embed(
     embed.color(0x2F3136);
 
     embed.author(|a| {
-        a.name(String::from("Miत्रों Support Help Command"));
+        a.name(String::from("Miत्रों Support | Help Menu"));
         a.icon_url(String::from(
             "https://cdn.discordapp.com/attachments/827217147486797875/952943506836582440/blue.png",
         ));
